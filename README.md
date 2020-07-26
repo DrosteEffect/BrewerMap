@@ -57,7 +57,7 @@ BREWERMAP is compatible with all MATLAB functions that require a colormap. The f
 
 ### Bonus Function ###
 
-BREWERMAP_PLOT creaes a figure which shows the nodes of all ColorBrewer colorschemes.
+BREWERMAP_PLOT creates a figure which shows the nodes of all ColorBrewer colorschemes.
 
 ### Bonus Function ###
 
