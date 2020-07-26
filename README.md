@@ -1,27 +1,18 @@
-BrewerMap
-=========
+BREWERMAP Function
+==================
 
-The complete palette of ColorBrewer colormaps for MATLAB. Simple selection by scheme name and map length.
+BREWERMAP provides all ColorBrewer colorschemes for MATLAB, with simple selection by colormap length and scheme name. Alternatively the scheme name can be preselected, after which only the colormap length is required to define an output colormap.
 
-
-One function provides the complete selection of the ColorBrewer colorschemes, especially intended for mapping and plots with attractive, distinguishable colors.
-
-Simple to use: only the the colormap length and the colorscheme name are needed to select and define an output colormap. The colorscheme can be preselected by the user, after which only the colormap length is required to define an output colormap.
-
-The function can be used as a drop-in replacement for the inbuilt colormap functions and it is compatible with all MATLAB functions that require a colormap. The function consists of just one M-file that provides all of the ColorBrewer colorschemes (no mat file, no third party files, no file-clutter!). Downsampling or interpolation of the nodes occurs automatically, if required (interpolation occurs within the Lab colorspace). As an option, the colormap can be returned reversed.
-
-Calling brewermap('plot') creates a figure that displays all of the ColorBrewer colorschemes.
-
-This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/). See the ColorBrewer website for further information about each colorscheme, colorblind suitability, licensing, and citations.
+BREWERMAP is compatible with all MATLAB functions that require a colormap. The function consists of just one M-file that provides all of the ColorBrewer colorschemes (no mat file, no third party files, no file-clutter!). Downsampling or interpolation or repetition of the nodes occurs automatically, if required. Interpolation uses the Lab colorspace.
 
 ### Examples ###
 
     % Plot a scheme's RGB values:
-    rgbplot(brewermap(9,'Blues')) % standard
+    rgbplot(brewermap(9, 'Blues')) % standard
     rgbplot(brewermap(9,'*Blues')) % reversed
     
     % View information about a colorscheme:
-    [~,num,typ] = brewermap(0,'Paired')
+    [~,num,typ] = brewermap(NaN,'Paired')
     num = 12
     typ = 'Qualitative'
     
@@ -33,18 +24,18 @@ This product includes color specifications and designs developed by Cynthia Brew
     plot(X,Y, 'linewidth',4)
     
     % Multiline plot in a loop:
+    set(0,'DefaultAxesColorOrder',brewermap(NaN,'Accent'))
     N = 6;
-    set(0,'DefaultAxesColorOrder',brewermap(N,'Accent'))
     X = linspace(0,pi*3,1000);
     Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X.', 1:N);
     for n = 1:N
-    plot(X(:),Y(:,n), 'linewidth',4);
-    hold all
+        plot(X(:),Y(:,n), 'linewidth',4);
+        hold all
     end
     
     % New colors for the COLORMAP example:
-    load spine
-    image(X)
+    S = load('spine.mat');
+    image(S.X)
     colormap(brewermap([],'YlGnBu'))
     
     % New colors for the SURF example:
@@ -64,16 +55,32 @@ This product includes color specifications and designs developed by Cynthia Brew
     'TitleString','Contour Intervals in Meters');
     plotm(lat, long, 'k')
 
-### Note ###
+### Bonus Function ###
 
-Note that the function BREWERMAP:
+BREWERMAP_PLOT creaes a figure which shows the nodes of all ColorBrewer colorschemes.
+
+### Bonus Function ###
+
+BREWERMAP_VIEW creates an interactive figure that allows selection of the colorscheme, and that contains two colorbars showing colors of the colormap and the grayscale equivalent.
+
+R2014b or later: BREWERMAP_VIEW can also update other axes' or figures' colormaps in real time, for example:
+
+    S = load('spine');
+    image(S.X)
+    brewermap_view(gca)
+
+### Notes ###
+
+The function BREWERMAP:
 * Consists of just one convenient M-file (no .mat files or file clutter).
-* No third-party file dependencies.
+* Has no third-party file dependencies.
 * Interpolates in the Lab colorspace.
 * Requires just the standard ColorBrewer scheme name to select the colorscheme.
 * Supports all ColorBrewer colorschemes.
 * Outputs a MATLAB standard N-by-3 numeric RGB array.
-* Default length is the standard MATLAB default colormap length (same length as the current colormap).
+* Uses a default length the same as MATLAB's colormaps (i.e. the length of the current colormap).
 * Is compatible with all MATLAB functions that use colormaps (eg: CONTOURCMAP).
 * Includes the option to reverse the colormap color sequence.
-* Does not break ColorBrewer's Apache license conditions!
+* Does not break ColorBrewer's Apache license conditions (unlike many on MATLAB File Exchange).
+
+This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/). See the ColorBrewer website for further information about each colorscheme, colorblind suitability, licensing, and citations.

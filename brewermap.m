@@ -1,39 +1,34 @@
-function [map,num,typ] = brewermap(N,scheme)
+function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 % The complete selection of ColorBrewer colorschemes (RGB colormaps).
 %
-% (c) 2014 Stephen Cobeldick
+% (c) 2014-2020 Stephen Cobeldick
 %
 % Returns any RGB colormap from the ColorBrewer colorschemes, especially
 % intended for mapping and plots with attractive, distinguishable colors.
 %
-%%% Syntax (basic):
-%  map = brewermap(N,scheme); % Select colormap length, select any colorscheme.
-%  brewermap('plot')          % View a figure showing all ColorBrewer colorschemes.
-%  schemes = brewermap('list')% Return a list of all ColorBrewer colorschemes.
-%  [map,num,typ] = brewermap(...); % The current colorscheme's number of nodes and type.
+%%% Basic Syntax:
+% brewermap() % print summary
+% map = brewermap(N,scheme)
+%%% Preset Syntax:
+% old = brewermap(scheme)
+% map = brewermap()
+% map = brewermap(N)
 %
-%%% Syntax (preselect colorscheme):
-%  old = brewermap(scheme); % Preselect any colorscheme, return the previous scheme.
-%  map = brewermap(N);      % Use preselected scheme, select colormap length.
-%  map = brewermap;         % Use preselected scheme, length same as current figure's colormap.
-%
-% See also CUBEHELIX RGBPLOT3 RGBPLOT COLORMAP COLORBAR PLOT PLOT3 SURF IMAGE AXES SET JET LBMAP PARULA
+% [...,num,typ] = brewermap(...)
 %
 %% Color Schemes %%
 %
 % This product includes color specifications and designs developed by Cynthia Brewer.
 % See the ColorBrewer website for further information about each colorscheme,
 % colour-blind suitability, licensing, and citations: http://colorbrewer.org/
-%
-% To reverse the colormap sequence simply prefix the string token with '*'.
-%
 % Each colorscheme is defined by a set of hand-picked RGB values (nodes).
+% To reverse the colormap sequence simply prefix the scheme name with '*'.
+%
 % If <N> is greater than the requested colorscheme's number of nodes then:
-%  * Sequential and Diverging schemes are interpolated to give a larger
-%    colormap. The interpolation is performed in the Lab colorspace.
-%  * Qualitative schemes are repeated to give a larger colormap.
+%  * Diverging and Sequential schemes are interpolated in Lab colorspace.
+%  * Qualitative schemes repeat the nodes (i.e. just like LINES does).
 % Else:
-%  * Exact values from the ColorBrewer sequences are returned for all colorschemes.
+%  * Exact values from the ColorBrewer schemes are returned for all colorschemes.
 %
 %%% Diverging
 %
@@ -60,20 +55,20 @@ function [map,num,typ] = brewermap(N,scheme)
 %% Examples %%
 %
 %%% Plot a scheme's RGB values:
-% rgbplot(brewermap(9,'Blues'))  % standard
-% rgbplot(brewermap(9,'*Blues')) % reversed
+% >> rgbplot(brewermap(9, 'Blues')) % standard
+% >> rgbplot(brewermap(9,'*Blues')) % reversed
 %
 %%% View information about a colorscheme:
-% [~,num,typ] = brewermap(0,'Paired')
+% >> [~,num,typ] = brewermap(NaN,'Paired')
 % num = 12
 % typ = 'Qualitative'
 %
 %%% Multi-line plot using matrices:
-% N = 6;
-% axes('ColorOrder',brewermap(N,'Pastel2'),'NextPlot','replacechildren')
-% X = linspace(0,pi*3,1000);
-% Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
-% plot(X,Y, 'linewidth',4)
+% >> N = 6;
+% >> axes('ColorOrder',brewermap(N,'Pastel2'),'NextPlot','replacechildren')
+% >> X = linspace(0,pi*3,1000);
+% >> Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
+% >> plot(X,Y, 'linewidth',4)
 %
 %%% Multi-line plot in a loop:
 % set(0,'DefaultAxesColorOrder',brewermap(NaN,'Accent'))
@@ -86,171 +81,137 @@ function [map,num,typ] = brewermap(N,scheme)
 % end
 %
 %%% New colors for the COLORMAP example:
-% load spine
-% image(X)
-% colormap(brewermap([],'YlGnBu'))
+% >> S = load('spine');
+% >> image(S.X)
+% >> colormap(brewermap([],'YlGnBu'))
 %
 %%% New colors for the SURF example:
-% [X,Y,Z] = peaks(30);
-% surfc(X,Y,Z)
-% colormap(brewermap([],'RdYlGn'))
-% axis([-3,3,-3,3,-10,5])
-%
-%%% New colors for the CONTOURCMAP example:
-% brewermap('PuOr'); % preselect the colorscheme.
-% load topo
-% load coast
-% figure
-% worldmap(topo, topolegend)
-% contourfm(topo, topolegend);
-% contourcmap('brewermap', 'Colorbar','on', 'Location','horizontal',...
-% 'TitleString','Contour Intervals in Meters');
-% plotm(lat, long, 'k')
+% >> [X,Y,Z] = peaks(30);
+% >> surfc(X,Y,Z)
+% >> colormap(brewermap([],'RdYlGn'))
+% >> axis([-3,3,-3,3,-10,5])
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (*=default):
+%%% Inputs:
 % N = NumericScalar, N>=0, an integer to specify the colormap length.
-%   = *[], same length as the current figure's colormap (see COLORMAP).
-%   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
-%   = CharRowVector, to preselect a ColorBrewer colorscheme for later use.
-%   = 'plot', create a figure showing all of the ColorBrewer colorschemes.
-%   = 'list', return a cell array of strings listing all ColorBrewer colorschemes.
+%   =  [], same length as the current figure's colormap (see COLORMAP).
+%   = NaN, same length as the defining RGB nodes (useful for line ColorOrder).
 % scheme = CharRowVector, a ColorBrewer colorscheme name.
-%        = *none, uses the preselected colorscheme (must be set previously!).
 %
 %%% Outputs:
 % map = NumericMatrix, size Nx3, a colormap of RGB values between 0 and 1.
-% num = NumericScalar, the number of nodes defining the ColorBrewer colorscheme.
+% num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
-% OR
-% schemes = CellOfCharRowVectors, a list of every ColorBrewer colorscheme.
 %
-% [map,num,typ] = brewermap(*N,*scheme)
-% OR
-% schemes = brewermap('list')
+% See also CUBEHELIX LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET
 
 %% Input Wrangling %%
 %
-persistent raw tok isr idp
+persistent scm
 %
-if isempty(raw)
-	raw = bmColors();
-end
+raw = bmColors();
 %
-msg = 'A colorscheme must be preselected before calling without a colorscheme name.';
-%
-if nargin==0 % Current figure's colormap length and the preselected colorscheme.
-	assert(~isempty(idp),msg)
-	[map,num,typ] = bmSample([],isr,raw(idp));
-elseif nargin==2 % Input colormap length and colorscheme.
-	assert(isnumeric(N),'The first argument must be a scalar numeric, or empty.')
-	assert(ischar(scheme)&&isrow(scheme),'The second argument must be a 1xN char.')
-	tmp = strncmp('*',scheme,1);
-	[map,num,typ] = bmSample(N,tmp,raw(bmMatch(scheme,tmp,raw)));
-elseif isnumeric(N) % Input colormap length and the preselected colorscheme.
-	assert(~isempty(idp),msg)
-	[map,num,typ] = bmSample(N,isr,raw(idp));
-else
-	assert(ischar(N)&&isrow(N),'The first argument must be a 1xN char or a scalar numeric.')
-	switch lower(N)
-		case 'plot' % Plot all colorschemes in a figure.
-			bmPlotFig(raw)
-		case 'list' % Return a list of all colorschemes.
-			map = {raw.str};
-			typ = {raw.typ};
-			num = [raw.num];
-		otherwise % Store the preselected colorscheme token.
-			tmp = strncmp('*',N,1);
-			idp = bmMatch(N,tmp,raw);
-			typ = raw(idp).typ;
-			num = raw(idp).num;
-			% Only update persistent values if colorscheme name is okay:
-			isr = tmp;
-			map = tok;
-			tok = N;
-	end
-end
-%
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap
-function idx = bmMatch(str,tmp,raw)
-% Match the requested colorscheme name to names in the raw data structure.
-str = str(1+tmp:end);
-idx = strcmpi({raw.str},str);
-assert(any(idx),'Colorscheme "%s" is not supported. Check the colorscheme list.',str)
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmMatch
-function [map,num,typ] = bmSample(N,isr,raw)
-% Pick a colorscheme, downsample/interpolate to the requested colormap length.
-%
-num = raw.num;
-typ = raw.typ;
-%
-if isempty(N)
-	N = size(get(gcf,'colormap'),1);
-elseif isscalar(N)&&isnan(N)
-	N = num;
-else
-	assert(isscalar(N),'First argument must be a numeric scalar, or empty.')
-	assert(isreal(N),'Input <N> must be a real numeric: %g+%gi',N,imag(N))
-	assert(fix(N)==N&&N>=0,'Input <N> must be positive integer: %g',N)
-end
-%
-if N==0
-	map = nan(0,3);
+err = 'First input must be a real positive scalar numeric or [] or NaN.';
+if nargin==0&&nargout==0
+	hdr = {   'Type'; 'Scheme'; 'Nodes'};
+	tsn = [{raw.typ};{raw.str};{raw.num}];
+	fprintf('%-12s %-9s %s\n',hdr{:});
+	fprintf('%-12s %-9s %u\n',tsn{:});
 	return
+elseif nargin==0 || isnumeric(N)&&isequal(N,[])
+	% Default is the same as MATLAB colormaps:
+	N = size(get(gcf,'colormap'),1);
+	if nargin<2
+		assert(~isempty(scm),'SC:colorbrewer:SchemeNotPreset',...
+			'Scheme must be preset before this call: BREWERMAP(SCHEME)')
+		scheme = scm;
+	end
+elseif nargin==1&&ischar(N)&&ndims(N)==2&&size(N,1)==1
+	if strcmpi(N,'list')
+		map = {raw.str};
+		num = [raw.num];
+		typ = {raw.typ};
+		return
+	end
+	scheme = N; % preset
+else
+	assert(isnumeric(N)&&isscalar(N),...
+		'SC:brewermap:NotScalarNumeric',err)
+	assert(isnan(N)||isreal(N)&&isfinite(N)&&fix(N)==N&&N>=0,...
+		'SC:brewermap:NotRealPositiveNotNaN',err)
 end
 %
-% downsample:
+assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
+	'SC:brewermap:NotCharacterVector',...
+	'Second input must be a character vector (the scheme name).')
+isr = strncmp(scheme,'*',1);
+ids = strcmpi(scheme(1+isr:end),{raw.str});
+assert(any(ids),'SC:brewermap:UnknownScheme','Unknown scheme name: %s',scheme)
+%
+num = raw(ids).num;
+typ = raw(ids).typ;
+%
+if ischar(N)
+	map = scm;
+	scm = N;
+	return
+elseif N==0
+	map = ones(0,3);
+	return
+elseif isnan(N)
+	N = num;
+end
+%
+% Downsample:
 [idx,itp] = bmIndex(N,num,typ);
-map = raw.rgb(idx,:)/255;
-% interpolate:
+map= raw(ids).rgb(idx,:)/255;
+% Interpolate:
 if itp
-	M = [...
-		+3.2406255,-1.5372080,-0.4986286;...
-		-0.9689307,+1.8757561,+0.0415175;...
-		+0.0557101,-0.2040211,+1.0569959];
+	M = [... sRGB to XYZ
+		0.4124564,0.3575761,0.1804375;...
+		0.2126729,0.7151522,0.0721750;...
+		0.0193339,0.1191920,0.9503041];
 	wpt = [0.95047,1,1.08883]; % D65
 	%
 	map = bmRGB2Lab(map,M,wpt); % optional
 	%
-	% Extrapolate a small amount at both ends:
-	%vec = linspace(0,num+1,N+2);
-	%map = interp1(1:num,map,vec(2:end-1),'linear','extrap');
-	% Interpolation completely within ends:
-	map = interp1(1:num,map,linspace(1,num,N),'spline');
+	% Extrapolate a small amount beyond end nodes:
+	%ido = linspace(0,num+1,N+2);
+	%ido = ido(2:end-1);
+	% Interpolation completely within end nodes:
+	ido = linspace(1,num,N);
+	%
+	switch typ
+		case 'Diverging'
+			mid = ceil(num/2);
+			ida =   1:mid;
+			idz = mid:num;
+			map = [...
+				interp1(ida,map(ida,:),ido(ido<=mid),'pchip');...
+				interp1(idz,map(idz,:),ido(ido>mid),'pchip')];
+		case 'Sequential'
+			map = interp1(1:num,map,ido,'pchip');
+		otherwise
+			error('SC:brewermap:NoInterp','Cannot interpolate this type.')
+	end
 	%
 	map = bmLab2RGB(map,M,wpt); % optional
 end
-% reverse order:
+% Limit output range:
+map = max(0,min(1,map));
+% Reverse row order:
 if isr
 	map = map(end:-1:1,:);
 end
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmSample
-function rgb = bmGammaCor(rgb)
-% Gamma correction of sRGB data.
-idx = rgb <= 0.0031308;
-rgb(idx) = 12.92 * rgb(idx);
-rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaCor
-function rgb = bmGammaInv(rgb)
-% Inverse gamma correction of sRGB data.
-idx = rgb <= 0.04045;
-rgb(idx) = rgb(idx) / 12.92;
-rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaInv
-function lab = bmRGB2Lab(rgb,M,wpt) % Nx3 <- Nx3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap
+function lab = bmRGB2Lab(rgb,M,wpt)
 % Convert a matrix of sRGB values to Lab.
-%
 %applycform(rgb,makecform('srgb2lab','AdaptedWhitePoint',wpt))
-%
 % RGB2XYZ:
-xyz = bmGammaInv(rgb) / M.';
+xyz = bmGammaInv(rgb) * M.';
 % Remember to include my license when copying my implementation.
 % XYZ2Lab:
 xyz = bsxfun(@rdivide,xyz,wpt);
@@ -258,14 +219,18 @@ idx = xyz>(6/29)^3;
 F = idx.*(xyz.^(1/3)) + ~idx.*(xyz*(29/6)^2/3+4/29);
 lab(:,2:3) = bsxfun(@times,[500,200],F(:,1:2)-F(:,2:3));
 lab(:,1) = 116*F(:,2) - 16;
-%
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmRGB2Lab
-function rgb = bmLab2RGB(lab,M,wpt) % Nx3 <- Nx3
+function rgb = bmGammaInv(rgb)
+% Inverse gamma correction of sRGB data.
+idx = rgb <= 0.04045;
+rgb(idx) = rgb(idx) / 12.92;
+rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaInv
+function rgb = bmLab2RGB(lab,M,wpt)
 % Convert a matrix of Lab values to sRGB.
-%
 %applycform(lab,makecform('lab2srgb','AdaptedWhitePoint',wpt))
-%
 % Lab2XYZ
 tmp = bsxfun(@rdivide,lab(:,[2,1,3]),[500,Inf,-200]);
 tmp = bsxfun(@plus,tmp,(lab(:,1)+16)/116);
@@ -274,53 +239,16 @@ tmp = idx.*(tmp.^3) + ~idx.*(3*(6/29)^2*(tmp-4/29));
 xyz = bsxfun(@times,tmp,wpt);
 % Remember to include my license when copying my implementation.
 % XYZ2RGB
-rgb = max(0,min(1, bmGammaCor(xyz * M.')));
-%
+rgb = max(0,min(1, bmGammaCor(xyz / M.')));
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%cbLab2RGB
-function bmPlotFig(raw)
-% Creates a figure showing all of the ColorBrewer colorschemes.
-%
-persistent cbh axh
-%
-xmx = max([raw.num]);
-ymx = numel(raw);
-%
-if ishghandle(cbh)
-	figure(cbh);
-	delete(axh);
-else
-	cbh = figure('HandleVisibility','callback', 'IntegerHandle','off',...
-		'NumberTitle','off', 'Name',[mfilename,' Plot'],'Color','white',...
-		'MenuBar','figure', 'Toolbar','none', 'Tag',mfilename);
-	set(cbh,'Units','pixels')
-	pos = get(cbh,'Position');
-	pos(1:2) = pos(1:2) - 123;
-	pos(3:4) = max(pos(3:4),[842,532]);
-	set(cbh,'Position',pos)
+function rgb = bmGammaCor(rgb)
+% Gamma correction of sRGB data.
+idx = rgb <= 0.0031308;
+rgb(idx) = 12.92 * rgb(idx);
+rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
 end
-%
-axh = axes('Parent',cbh, 'Color','none',...
-	'XTick',0:xmx, 'YTick',0.5:ymx, 'YTickLabel',{raw.str}, 'YDir','reverse');
-title(axh,['ColorBrewer Color Schemes (',mfilename,'.m)'], 'Interpreter','none')
-xlabel(axh,'Scheme Nodes')
-ylabel(axh,'Scheme Name')
-axf = get(axh,'FontName');
-%
-for y = 1:ymx
-	num = raw(y).num;
-	typ = raw(y).typ;
-	map = raw(y).rgb(bmIndex(num,num,typ),:)/255; % downsample
-	for x = 1:num
-		patch([x-1,x-1,x,x],[y-1,y,y,y-1],1, 'FaceColor',map(x,:), 'Parent',axh)
-	end
-	text(xmx+0.1,y-0.5,typ, 'Parent',axh, 'FontName',axf)
-end
-%
-drawnow()
-%
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmPlotFig
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaCor
 function [idx,itp] = bmIndex(N,num,typ)
 % Ensure exactly the same colors as the online ColorBrewer colorschemes.
 %
@@ -376,7 +304,7 @@ switch typ
 				idx = [1,3,4,6,7,8,10,11,13];
 		end
 	otherwise
-		error('The colorscheme type "%s" is not recognized',typ)
+		error('SC:brewermap:UnknownType','Unknown type string.')
 end
 %
 end
@@ -498,13 +426,15 @@ for k = 1:numel(raw)
 			raw(k).num = size(raw(k).rgb,1);
 		case 'Sequential'
 			raw(k).num = 9;
+		otherwise
+			error('SC:brewermap:UnknownType','Unknown type string.')
 	end
 end
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmColors
 % Code and Implementation:
-% Copyright (c) 2014 Stephen Cobeldick
+% Copyright (c) 2014-2020 Stephen Cobeldick
 % Color Values Only:
 % Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.
 %
