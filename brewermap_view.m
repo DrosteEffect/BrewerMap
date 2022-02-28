@@ -1,7 +1,7 @@
 function [map,num,typ,scheme] = brewermap_view(N,scheme) %#ok<*ISMAT>
-% An interactive figure for ColorBrewer colormap selection. With demo!
+% An interactive figure for ColorBrewer colorscheme selection (RGB colormaps)
 %
-% (c) 2014-2020 Stephen Cobeldick
+% (c) 2014-2022 Stephen Cobeldick
 %
 % View Cynthia Brewer's ColorBrewer colorschemes in a figure.
 %
@@ -19,7 +19,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme) %#ok<*ISMAT>
 % brewermap_view(N,scheme)
 % brewermap_view([],...)
 % brewermap_view(axes/figure handles,...) % see "Adjust Colormaps"
-% [map,scheme] = brewermap_view(...)
+% [map,num,typ] = brewermap_view(...)
 %
 % Calling the function with an output argument blocks MATLAB execution until
 % the figure is deleted: the final colormap and colorscheme are then returned.
@@ -39,24 +39,25 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme) %#ok<*ISMAT>
 %
 %%% Inputs (*=default):
 % N = NumericScalar, an integer to define the colormap length.
-%   = *[], colormap length of one hundred and twenty-eight (128).
+%   = *[], colormap length of two hundred and fifty-six (256).
 %   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
 %   = Array of axes/figure handles. R2014b or later only.
-% scheme = CharRowVector, a ColorBrewer colorscheme name.
+% scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
 %%% Outputs (these block code execution until the figure is closed!):
 % map = NumericMatrix, the colormap defined when the figure is closed.
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
 %
-% See also BREWERMAP CUBEHELIX RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
+% See also BREWERMAP BREWERMAP_PLOT CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
+% RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
 
 %% Input Wrangling %%
 %
 persistent ax2D ln2D ax3D pt3D txtH is2D cbAx cbIm pTxt pSld bEig bGrp bRev scm isr
 %
 new = isempty(ax2D)||~ishghandle(ax2D);
-dfn = 128;
+dfn = 256;
 upd = false;
 upb = false;
 hgv = [];
@@ -81,7 +82,7 @@ else
 	error('SC:brewermap_view:UnsupportedInput',err)
 end
 %
-[mcs,mun,pyt] = brewermap('list');
+[mcs,nmn,pyt] = brewermap('list');
 %
 % Check BREWERMAP output:
 tmp = find([any(diff(double(char(pyt)),1),2);1]);
@@ -90,21 +91,24 @@ assert(isequal(tmp,[9;17;35]),'SC:brewermap_view:SchemeSequence',...
 %
 % Default pseudo-random colorscheme:
 if nargin==0 || new
-	isr = false;
+	isr = rand(1)>0.5;
 	scm = mcs{1+mod(round(now*1e7),numel(mcs))};
 end
+%
 % Parse input colorscheme:
 if nargin==2
-	assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
+	scheme = bmv1s2c(scheme);
+	assert(ischar(scheme) && ndims(scheme)==2 && size(scheme,1)==1,...
 		'SC:brewermap_view:NotCharacterVector',...
 		'Second input <scheme> must be a 1xN char vector.')
 	% Check if a reversed colormap was requested:
-	isr = strncmp(scheme,'*',1);
-	scm = scheme(1+isr:end);
+	isr = strncmp(scheme,'-',1) || strncmp(scheme,'*',1);
+	isd = strncmp(scheme,'+',1) || isr;
+	scm = scheme(1+isd:end);
 end
 %
 if isnan(N)
-	N = mun(strcmpi(scm,mcs));
+	N = nmn(strcmpi(scm,mcs));
 end
 %
 %% Ensure Figure Exists %%
@@ -213,16 +217,22 @@ end
 %
 %% Nested Functions %%
 %
-	function str = makeName()
-		str = '*';
-		str = [str(isr),scm];
+	function str = bmvName()
+		% Generate the colorscheme name.
+		drn = '+-';
+		ids = strcmpi(scm,mcs);
+		if any(ids)
+			str = [drn(1+isr),mcs{ids}];
+		else % will throw an error in BREWERMAP:
+			str = scm;
+		end
 	end
 %
 	function bmvUpDt()
 		% Update all graphics objects in the figure.
 		%
 		% Get ColorBrewer colormap and grayscale equivalent:
-		[map,num,typ] = brewermap(N,makeName());
+		[map,num,typ] = brewermap(N,bmvName());
 		mag = map*[0.298936;0.587043;0.114021];
 		%
 		% Update colorbar values:
@@ -246,7 +256,7 @@ end
 		set(bRev, 'Value',isr)
 		%
 		% Update warning text:
-		str = {[typ,' '];sprintf('%d Nodes ',num)};
+		str = {[bmvName(),' '];[typ,' '];sprintf('%d Nodes ',num)};
 		set(txtH,'String',str);
 		%
 		% Update parameter value text:
@@ -255,7 +265,7 @@ end
 		% Update external axes/figure:
 		nmr(1) = N;
 		for k = 1:numel(hgv)
-			colormap(hgv(k),brewermap(nmr(k),makeName()));
+			colormap(hgv(k),brewermap(nmr(k),bmvName()));
 		end
 		%
 		drawnow()
@@ -352,15 +362,22 @@ bmvUpDt()
 %
 if nargout
 	waitfor(ax2D);
-	scheme = makeName();
+	scheme = bmvName();
 else
 	clear map
 end
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_view
+function arr = bmv1s2c(arr)
+% If scalar string then extract the character vector, otherwise data is unchanged.
+if isa(arr,'string') && isscalar(arr)
+	arr = arr{1};
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
 %
-% Copyright (c) 2014-2020 Stephen Cobeldick
+% Copyright (c) 2014-2022 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
