@@ -39,7 +39,7 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 %  Spectral |             |  PuBu     YlOrRd
 %
 % If <N> is greater than the requested colorscheme's defining nodes then:
-%  - Diverging and Sequential colorschemes are interpolated in Lab colorspace.
+%  - Diverging and Sequential colorschemes are interpolated.
 %  - Qualitative colorschemes repeat the nodes (i.e. just like LINES does).
 % Else:
 %  - Exact values from the ColorBrewer colorschemes are returned.
@@ -58,8 +58,8 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 % >> axis([-3,3,-3,3,-10,5])
 %
 %%% Plot a colorscheme's RGB values:
-% >> rgbplot(brewermap(NaN, 'Blues')) % standard
-% >> rgbplot(brewermap(NaN,'-Blues')) % reversed
+% >> rgbplot(brewermap(NaN,  'Blues')) % standard
+% >> rgbplot(brewermap(NaN, '-Blues')) % reversed
 %
 %%% View information about a colorscheme:
 % >> [~,num,typ] = brewermap(NaN,'Paired')
@@ -87,7 +87,7 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 %
 %%% Inputs:
 % N = NumericScalar, N>=0, an integer to specify the colormap length.
-%   =  [], same length as the current figure's colormap (see COLORMAP).
+%   =  [], same length as MATLAB's inbuilt colormap functions.
 %   = NaN, same length as the defining RGB nodes (useful for line ColorOrder).
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
@@ -181,17 +181,8 @@ end
 map = bmc(ids).rgb(idx,:)/255;
 %
 % Interpolate:
+%
 if itp
-	%
-	M = [... High-precision sRGB to XYZ matrix:
-		0.4124564,0.3575761,0.1804375;...
-		0.2126729,0.7151522,0.0721750;...
-		0.0193339,0.1191920,0.9503041];
-	% Source: http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-	%
-	wpt = [0.95047,1,1.08883]; % D65
-	%
-	map = bmRGB2Lab(map,M,wpt); % optional
 	%
 	% Extrapolate a small amount beyond the end nodes:
 	%ido = linspace(0,num+1,N+2);
@@ -212,8 +203,6 @@ if itp
 		otherwise
 			error('SC:brewermap:NoInterp','Cannot interpolate this type.')
 	end
-	%
-	map = bmLab2RGB(map,M,wpt); % optional
 	%
 end
 %
@@ -248,56 +237,16 @@ if isa(arr,'string') && isscalar(arr)
 	arr = arr{1};
 end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bm1s2c
-function lab = bmRGB2Lab(rgb,M,wpt)
-% Convert a matrix of sRGB values to Lab.
-%applycform(rgb,makecform('srgb2lab','AdaptedWhitePoint',wpt))
-% RGB2XYZ:
-xyz = bmGammaInv(rgb) * M.';
-% XYZ2Lab:
-xyz = bsxfun(@rdivide,xyz,wpt);
-idx = xyz>(6/29)^3;
-F = idx.*(xyz.^(1/3)) + ~idx.*(xyz*(29/6)^2/3+4/29);
-lab(:,2:3) = bsxfun(@times,[500,200],F(:,1:2)-F(:,2:3));
-lab(:,1) = 116*F(:,2) - 16;
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmRGB2Lab
-function rgb = bmGammaInv(rgb)
-% Inverse gamma correction of sRGB data.
-idx = rgb <= 0.04045;
-rgb(idx) = rgb(idx) / 12.92;
-rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaInv
-function rgb = bmLab2RGB(lab,M,wpt)
-% Convert a matrix of Lab values to sRGB.
-%applycform(lab,makecform('lab2srgb','AdaptedWhitePoint',wpt))
-% Lab2XYZ
-tmp = bsxfun(@rdivide,lab(:,[2,1,3]),[500,Inf,-200]);
-tmp = bsxfun(@plus,tmp,(lab(:,1)+16)/116);
-idx = tmp>(6/29);
-tmp = idx.*(tmp.^3) + ~idx.*(3*(6/29)^2*(tmp-4/29));
-xyz = bsxfun(@times,tmp,wpt);
-% XYZ2RGB
-rgb = max(0,min(1, bmGammaCor(xyz / M.')));
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%cbLab2RGB
-function rgb = bmGammaCor(rgb)
-% Gamma correction of sRGB data.
-idx = rgb <= 0.0031308;
-rgb(idx) = 12.92 * rgb(idx);
-rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
-end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaCor
 function [idx,itp] = bmIndex(N,num,typ)
 % Ensure exactly the same colors as the online ColorBrewer colorschemes.
 %
-itp = N>num;
 switch typ
 	case 'Qualitative'
 		itp = false;
 		idx = 1+mod(0:N-1,num);
 	case 'Diverging'
+		itp = N>num;
 		switch N
 			case 1 % extrapolated
 				idx = 8;
@@ -323,6 +272,7 @@ switch typ
 				idx = [1,2,4,6,7,8,9,10,12,14,15];
 		end
 	case 'Sequential'
+		itp = N>num;
 		switch N
 			case 1 % extrapolated
 				idx = 6;
@@ -351,7 +301,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmIndex
 function bmc = bmColors()
 % Return a structure of all colorschemes: name, scheme type, RGB values, number of nodes.
-% Order: first sort by <typ>, then case-insensitive sort by <str>:
+% Order: sorted first by <typ>, then case-insensitive sorted by <str>.
 bmc(35).str = 'YlOrRd';
 bmc(35).typ = 'Sequential';
 bmc(35).rgb = [255,255,204;255,255,178;255,237,160;254,217,118;254,204,92;254,178,76;253,141,60;252,78,42;240,59,32;227,26,28;189,0,38;177,0,38;128,0,38];
@@ -457,7 +407,7 @@ bmc(02).rgb = [142,1,82;197,27,125;208,28,139;222,119,174;233,163,201;241,182,21
 bmc(01).str = 'BrBG';
 bmc(01).typ = 'Diverging';
 bmc(01).rgb = [84,48,5;140,81,10;166,97,26;191,129,45;216,179,101;223,194,125;246,232,195;245,245,245;199,234,229;128,205,193;90,180,172;53,151,143;1,133,113;1,102,94;0,60,48];
-% number of nodes:
+% Number of nodes:
 for k = 1:numel(bmc)
 	switch bmc(k).typ
 		case 'Diverging'

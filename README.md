@@ -3,7 +3,7 @@ BREWERMAP Function
 
 BREWERMAP provides all ColorBrewer colorschemes for MATLAB, with simple selection by colormap length and scheme name. Alternatively the scheme name can be preselected, after which only the colormap length is required to define an output colormap.
 
-BREWERMAP is compatible with all MATLAB functions that require a colormap function. The function consists of just one M-file that provides all of the ColorBrewer colorschemes (no mat file, no third party files, no file-clutter!). Downsampling or interpolation or repetition of the nodes occurs automatically, if required. Interpolation uses the Lab colorspace.
+BREWERMAP is compatible with all MATLAB functions that require a colormap function. The function consists of just one M-file that provides all of the ColorBrewer colorschemes (no mat file, no third party files, no file-clutter!). Downsampling or interpolation or repetition of the nodes occurs automatically, if required.
 
 ### Examples ###
 
@@ -72,13 +72,16 @@ PRESET_COLORMAP is a wrapper for any colormap function, storing the function and
     preset_colormap(@brewermap, "blues")
     colormap(preset_colormap)
 
+### Colorspace ###
+
+Interpolation is performed in RGB colorspace. Interpolation in other colorspaces (e.g. CIELab) produces no perceptable benefit at the cost of extra processing and noise caused by the round-trip conversion.
+
 ### Notes ###
 
 The function BREWERMAP:
 * Consists of just one convenient M-file (no .mat files or file clutter).
 * Has no third-party file dependencies.
 * Has no special toolbox dependencies.
-* Interpolates in the Lab colorspace.
 * Requires just the standard ColorBrewer colorscheme name to select the colorscheme.
 * Accepts the colorscheme name as a string scalar or a character vector.
 * Supports all ColorBrewer colorschemes.
