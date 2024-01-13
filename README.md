@@ -65,7 +65,12 @@ R2014b or later: BREWERMAP_VIEW can also update other axes' or figures' colormap
 
     S = load('spine');
     image(S.X)
-    brewermap_view(gca)
+    brewermap_view(gca) % default = colormap
+
+R2019b or later can also update other axes's or figures' line colororders in real time, for example:
+
+    plot(rand(7,7))
+    brewermap_view(gca,[],true) % colororder
 
 PRESET_COLORMAP is a wrapper for any colormap function, storing the function and any parameter values for future calls.
 
