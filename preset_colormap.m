@@ -1,11 +1,12 @@
 function map = preset_colormap(N,varargin)
 % Wrapper for any COLORMAP function, to provide preset parameter values.
 %
-% (c) 2020-2022 Stephen Cobeldick
+% (c) 2020-2024 Stephen Cobeldick
 %
 %%% Syntax:
-% preset_colormap(@fun,p1,p2,...,pN) % store function and any parameters
+% preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
 % map = preset_colormap(N)           % generate colormap
+% map = preset_colormap              % generate colormap
 %
 %%% Examples %%%
 %
@@ -29,7 +30,7 @@ function map = preset_colormap(N,varargin)
 % >> contourcmap('preset_colormap', 'Colorbar','on', 'Location','horizontal','TitleString','Contour Intervals in Meters');
 % >> plotm(lat, long, 'k')
 %
-% See Also BREWERMAP CUBEHELIX COLORMAP CONTOURCMAP
+% See Also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
 
 persistent fnh arg
 %

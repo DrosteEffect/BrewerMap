@@ -1,7 +1,7 @@
 function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 % The complete selection of ColorBrewer colorschemes/palettes (RGB colormaps).
 %
-% (c) 2014-2022 Stephen Cobeldick
+% (c) 2014-2024 Stephen Cobeldick
 %
 % Returns any RGB colormap from the ColorBrewer colorschemes, especially
 % intended for mapping and plots with attractive, distinguishable colors.
@@ -126,7 +126,7 @@ elseif isnumeric(N)
 	else
 		assert(isscalar(N),...
 			'SC:brewermap:N:NotScalarNumeric',err)
-		assert(isnan(N) || isreal(N) && isfinite(N) && fix(N)==N && N>=0,...
+		assert(isnan(N) || isreal(N)&&isfinite(N)&&fix(N)==N&&N>=0,...
 			'SC:brewermap:N:NotWholeRealNotNaN',err)
 	end
 	if nargin<2
@@ -136,15 +136,15 @@ elseif isnumeric(N)
 		scheme = scm;
 	else
 		scheme = bm1s2c(scheme);
-		assert(ischar(scheme) && ndims(scheme)==2 && size(scheme,1)==1,...
+		assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
 			'SC:brewermap:scheme:NotText',...
-			'Input <scheme> must be a character vector or string scalar.')
+			'Input <scheme> must be a character vector or a string scalar.')
 	end
 else % preset
 	scheme = bm1s2c(N);
-	assert(ischar(scheme) && ndims(scheme)==2 && size(scheme,1)==1,...
+	assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
 		'SC:brewermap:N:NotText',...
-		'To preset the scheme <N> must be a character vector or string scalar.')
+		'To preset: the scheme must be a character vector or a string scalar.')
 	if strcmpi(scheme,'list')
 		map = {bmc.str};
 		num = [bmc.num];
@@ -193,15 +193,15 @@ if itp
 	switch typ
 		case 'Diverging'
 			mid = ceil(num/2);
-			ida =   1:mid;
-			idz = mid:num;
+			idl =   1:mid;
+			idr = mid:num;
 			map = [...
-				interp1(ida,map(ida,:),ido(ido<=mid),'pchip');...
-				interp1(idz,map(idz,:),ido(ido>mid),'pchip')];
+				interp1(idl,map(idl,:),ido(ido<=mid),'pchip');...
+				interp1(idr,map(idr,:),ido(ido>mid),'pchip')];
 		case 'Sequential'
 			map = interp1(1:num,map,ido,'pchip');
 		otherwise
-			error('SC:brewermap:NoInterp','Cannot interpolate this type.')
+			error('SC:brewermap:Interp:UnknownType','Cannot interpolate this colorscheme type.')
 	end
 	%
 end
@@ -294,7 +294,7 @@ switch typ
 				idx = [1,3,4,6,7,8,10,11,13];
 		end
 	otherwise
-		error('SC:brewermap:UnknownType','Unknown type string.')
+		error('SC:brewermap:Index:UnknownType','Unknown colorscheme type.')
 end
 %
 end
@@ -417,7 +417,7 @@ for k = 1:numel(bmc)
 		case 'Sequential'
 			bmc(k).num = 9;
 		otherwise
-			error('SC:brewermap:UnknownType','Unknown type string.')
+			error('SC:brewermap:Colors:UnknownType','Unknown colorscheme type.')
 	end
 end
 %
@@ -425,7 +425,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmColors
 %
 % Code and Implementation:
-% Copyright (c) 2014-2022 Stephen Cobeldick
+% Copyright (c) 2014-2024 Stephen Cobeldick
 % Color Values Only:
 % Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.
 %

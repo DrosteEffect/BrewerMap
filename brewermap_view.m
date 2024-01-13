@@ -1,7 +1,7 @@
 function [map,num,typ,scheme] = brewermap_view(N,scheme) %#ok<*ISMAT>
 % An interactive figure for ColorBrewer colorscheme selection (RGB colormaps)
 %
-% (c) 2014-2022 Stephen Cobeldick
+% (c) 2014-2024 Stephen Cobeldick
 %
 % View Cynthia Brewer's ColorBrewer colorschemes in a figure.
 %
@@ -37,9 +37,9 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme) %#ok<*ISMAT>
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (*=default):
+%%% Inputs (**=default):
 % N = NumericScalar, an integer to define the colormap length.
-%   = *[], colormap length of two hundred and fifty-six (256).
+%   = []**, colormap length of two hundred and fifty-six (256).
 %   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
 %   = Array of axes/figure handles. R2014b or later only.
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
@@ -182,10 +182,10 @@ if new % Create a new figure.
 	C(1,1,:) = [1,1,1];
 	cbAx(2) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
 		'Position',[1-cbw/2,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
-		'YDir','reverse', 'HitTest','off');
+		'YDir','normal', 'HitTest','off');
 	cbAx(1) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
 		'Position',[1-cbw/1,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
-		'YDir','reverse', 'HitTest','off');
+		'YDir','normal', 'HitTest','off');
 	cbIm(2) = image('Parent',cbAx(2), 'CData',C);
 	cbIm(1) = image('Parent',cbAx(1), 'CData',C);
 	%

@@ -1,7 +1,7 @@
 function brewermap_plot()
 % Simple plot of all ColorBrewer colorscheme nodes in one figure.
 %
-% (c) 2014-2022 Stephen Cobeldick
+% (c) 2014-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % brewermap_plot()
