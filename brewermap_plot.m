@@ -1,5 +1,5 @@
 function brewermap_plot()
-% Simple plot of all ColorBrewer colorscheme nodes in one figure.
+% Simple figure of all ColorBrewer 2.0 colorschemes' defining nodes.
 %
 % (c) 2014-2024 Stephen Cobeldick
 %

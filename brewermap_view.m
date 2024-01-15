@@ -1,17 +1,16 @@
-function [map,num,typ,scheme] = brewermap_view(N,scheme,isco) %#ok<*ISMAT>
-% An interactive figure for ColorBrewer colorscheme selection (RGB colormaps)
+function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
+% Creates an interactive figure for viewing ColorBrewer colormaps. With demo!
 %
 % (c) 2014-2024 Stephen Cobeldick
 %
-% View Cynthia Brewer's ColorBrewer colorschemes in a figure.
-%
+% View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
 % * Two colorbars give the colorscheme in color and grayscale.
 % * A button toggles between 3D-cube and 2D-lineplot of the RGB values.
 % * A button toggles an endless demo cycle through the colorschemes.
 % * A button reverses the colormap.
-% * 35 buttons select any ColorBrewer colorscheme.
-% * Text with the colorscheme's type (Diverging/Qualitative/Sequential)
-% * Text with the colorscheme's number of nodes (defining colors).
+% * Thirty-five buttons select any ColorBrewer colorscheme.
+% * Text with the colorscheme's type (Diverging/Qualitative/Sequential).
+% * Text with the colorscheme's number of nodes (i.e. defining colors).
 %
 %%% Syntax:
 % brewermap_view
@@ -23,13 +22,13 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco) %#ok<*ISMAT>
 % [map,num,typ] = brewermap_view(...)
 %
 % Calling the function with an output argument blocks MATLAB execution until
-% the figure is deleted: the final colormap and colorscheme are then returned.
+% the figure is deleted: the final colormap and parameters are then returned.
 %
 %% Adjust Colormaps or Colororders of Figures or Axes %%
 %
-% Only R2014b or later. Provide axes or figure handles as the first input
-% and their COLORMAP() will be updated in real-time by BREWERMAP_VIEW.
-% For R2019b or later: set the 3rd input to TRUE to set the COLORORDER().
+% For R2014b or later: provide axes or figure handles as the first input
+% and their COLORMAP will be updated in real-time by BREWERMAP_VIEW.
+% For R2019b or later: set the 3rd input to TRUE to update COLORORDER.
 %
 %%% Examples:
 %
@@ -37,7 +36,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco) %#ok<*ISMAT>
 % >> image(S.X)
 % >> brewermap_view(gca) % colormap
 %
-% >> plot(rand(7,7))
+% >> plot(rand(5,7))
 % >> brewermap_view(gca,[],true) % colororder
 %
 %% Input and Output Arguments %%
@@ -48,7 +47,9 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco) %#ok<*ISMAT>
 %   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
 %   = Array of axes or figure handles. R2014b or later only.
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
-% isco   = true/false** to set the axes or figures colororder/colormap.
+%        = []** randomly selects a colorscheme.
+% isco = LogicalScalar, true/false** updates the colororder/colormap of
+%        the provided axes or figure handles.  R2019b or later only.
 %
 %%% Outputs (these block code execution until the figure is closed!):
 % map = NumericMatrix, the colormap defined when the figure is closed.
@@ -76,31 +77,31 @@ else % default
 	fnh = @colormap;
 end
 %
-err = 'First input must be a real positive scalar numeric or [] or NaN.';
+err = 'First input <N> must be a real positive scalar numeric or [] or NaN.';
 if nargin==0 || isnumeric(N)&&isequal(N,[])
 	N = dfn;
 elseif isnumeric(N)
-	assert(isscalar(N),'SC:brewermap_view:NotScalarNumeric',err)
-	assert(isnan(N)||isreal(N)&&isfinite(N)&&fix(N)==N&&N>0,...
-		'SC:brewermap_view:NotRealPositiveNotNaN',err)
+	assert(isscalar(N),'SC:brewermap_view:N:NotScalarNumeric',err)
+	assert(isreal(N)&&isfinite(N)&&fix(N)==N&&N>0||isnan(N),...
+		'SC:brewermap_view:N:NotRealPositiveIntegerNorNaN',err)
 	N = double(N);
 elseif all(ishghandle(N(:))) % R2014b or later
-	assert(isgraphics(N(:),'axes')|isgraphics(N(:),'figure'),...
-		'SC:brewermap_view:NotAxesNorFigureHandles',...
-		'First input may be an array of figure or axes handles.')
+	assert(all(isgraphics(N(:),'axes')|isgraphics(N(:),'figure')),...
+		'SC:brewermap_view:N:NotAxesNorFigureHandles',...
+		'First input <N> may be an array of figure or axes handles.')
 	hgv = N(:);
 	nmr = arrayfun(@(h)size(fnh(h),1),hgv);
 	N = nmr(1);
 else
-	error('SC:brewermap_view:UnsupportedInput',err)
+	error('SC:brewermap_view:N:UnsupportedInput',err)
 end
 %
 [mcs,nmn,pyt] = brewermap('list');
 %
 % Check BREWERMAP output:
 tmp = find([any(diff(double(char(pyt)),1),2);1]);
-assert(isequal(tmp,[9;17;35]),'SC:brewermap_view:SchemeSequence',...
-	'The BREWERMAP function returned an unexpected scheme sequence.')
+assert(isequal(tmp,[9;17;35]),'SC:brewermap_view:BREWERMAP:OutputOrder',...
+	'The BREWERMAP function returned an unexpected colorscheme sequence.')
 %
 if nargin<2 || isnumeric(scheme)&&isequal(scheme,[])
 	% Default pseudo-random colorscheme:
@@ -110,8 +111,8 @@ else
 	% Parse input colorscheme:
 	scheme = bmv1s2c(scheme);
 	assert(ischar(scheme) && ndims(scheme)==2 && size(scheme,1)==1,...
-		'SC:brewermap_view:NotCharacterVector',...
-		'Second input <scheme> must be a 1xN char vector.')
+		'SC:brewermap_view:scheme:NotCharacterVector',...
+		'Second input <scheme> must be a 1xN char vector.') %#ok<ISMAT>
 	% Check if a reversed colormap was requested:
 	isr = strncmp(scheme,'-',1) || strncmp(scheme,'*',1);
 	isd = strncmp(scheme,'+',1) || isr;
@@ -130,7 +131,7 @@ rbd = dfn;
 stp = [1,10]; % [minor,major]
 %
 % Define the 3D cube axis order:
-xyz = 'RGB'; % choose order
+xyz = 'RGB'; % specify the order here.
 [~,xyz] = ismember(xyz,'RGB');
 %
 if new % Create a new figure.
@@ -200,7 +201,7 @@ if new % Create a new figure.
 	cbIm(2) = image('Parent',cbAx(2), 'CData',C);
 	cbIm(1) = image('Parent',cbAx(1), 'CData',C);
 	%
-	% Add parameter slider, listener, and corresponding text:
+	% Add parameter sliders, listeners, and corresponding text:
 	sv = mean([lbd,rbd],2);
 	pTxt = uicontrol(figH,'Style','text', 'Units','normalized',...
 		'Position',[bgw+2*gap,bgh-2*bth-gap,btw,bth], 'String','X');
@@ -230,10 +231,10 @@ end
 %
 	function str = bmvName()
 		% Generate the colorscheme name.
-		drn = '+-';
+		pfx = '+-';
 		ids = strcmpi(scm,mcs);
 		if any(ids)
-			str = [drn(1+isr),mcs{ids}];
+			str = [pfx(1+isr),mcs{ids}];
 		else % will throw an error in BREWERMAP:
 			str = scm;
 		end
@@ -247,12 +248,12 @@ end
 		mag = map*[0.298936;0.587043;0.114021];
 		%
 		% Update colorbar values:
-		set(cbAx, 'YLim', [0,abs(N)+(N==0)]+0.5);
+		set(cbAx, 'YLim',[0,abs(N)+(N==0)]+0.5);
 		set(cbIm(1), 'CData',reshape(map,[],1,3))
-		set(cbIm(2), 'CData',repmat(mag,[1,1,3]))
+		set(cbIm(2), 'CData', repmat(mag,[1,1,3]))
 		%
 		% Update 2D line / 3D patch values:
-		if  get(is2D, 'Value') % 2D
+		if get(is2D, 'Value')
 			set(ln2D, 'XData',linspace(0,1,abs(N)));
 			set(ln2D,{'YData'},num2cell([map,mag],1).');
 		else % 3D
@@ -273,7 +274,7 @@ end
 		% Update parameter value text:
 		set(pTxt(1), 'String',sprintf('N = %.0f',N));
 		%
-		% Update external axes/figure:
+		% Update external axes/figure colormaps/colororders:
 		nmr(1) = N;
 		for k = 1:numel(hgv)
 			fnh(hgv(k),brewermap(nmr(k),bmvName()));
@@ -388,7 +389,7 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
 %
-% Copyright (c) 2014-2022 Stephen Cobeldick
+% Copyright (c) 2014-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

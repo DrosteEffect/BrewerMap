@@ -1,9 +1,9 @@
-function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
+function [map,num,typ,scheme] = brewermap(N,scheme)
 % The complete selection of ColorBrewer colorschemes/palettes (RGB colormaps).
 %
 % (c) 2014-2024 Stephen Cobeldick
 %
-% Returns any RGB colormap from the ColorBrewer colorschemes, especially
+% Returns an RGB colormap from Cynthia Brewer's ColorBrewer 2.0 palettes,
 % intended for mapping and plots with attractive, distinguishable colors.
 %
 %%% Basic Syntax:
@@ -58,7 +58,7 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 % >> axis([-3,3,-3,3,-10,5])
 %
 %%% Plot a colorscheme's RGB values:
-% >> rgbplot(brewermap(NaN,  'Blues')) % standard
+% >> rgbplot(brewermap(NaN, '+Blues')) % standard
 % >> rgbplot(brewermap(NaN, '-Blues')) % reversed
 %
 %%% View information about a colorscheme:
@@ -85,10 +85,10 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs:
+%%% Inputs (**=default):
 % N = NumericScalar, N>=0, an integer to specify the colormap length.
-%   =  [], same length as MATLAB's inbuilt colormap functions.
-%   = NaN, same length as the defining RGB nodes (useful for line ColorOrder).
+%   = []**, map has the same length as MATLAB's inbuilt colormap functions.
+%   = NaN, map is exactly the defining RGB nodes (useful for line ColorOrder).
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
 %%% Outputs:
@@ -104,7 +104,7 @@ function [map,num,typ,scheme] = brewermap(N,scheme) %#ok<*ISMAT>
 persistent bmc scm txt
 %
 if isempty(bmc)
-	bmc = bmColors();
+	bmc = bmStruct();
 end
 %
 if nargin==0
@@ -128,6 +128,7 @@ elseif isnumeric(N)
 			'SC:brewermap:N:NotScalarNumeric',err)
 		assert(isnan(N) || isreal(N)&&isfinite(N)&&fix(N)==N&&N>=0,...
 			'SC:brewermap:N:NotWholeRealNotNaN',err)
+		N = double(N);
 	end
 	if nargin<2
 		assert(~isempty(scm),...
@@ -138,13 +139,16 @@ elseif isnumeric(N)
 		scheme = bm1s2c(scheme);
 		assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
 			'SC:brewermap:scheme:NotText',...
-			'Input <scheme> must be a character vector or a string scalar.')
+			'Input <scheme> must be a character vector or a string scalar.') %#ok<ISMAT>
 	end
 else % preset
+	assert(nargin<2,...
+		'SC:brewermap:WrongArgumentNumber',...
+		'If calling with two inputs then the 1st input must be numeric.')
 	scheme = bm1s2c(N);
 	assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
 		'SC:brewermap:N:NotText',...
-		'To preset: the scheme must be a character vector or a string scalar.')
+		'To preset: the scheme must be a character vector or a string scalar.') %#ok<ISMAT>
 	if strcmpi(scheme,'list')
 		map = {bmc.str};
 		num = [bmc.num];
@@ -201,7 +205,7 @@ if itp
 		case 'Sequential'
 			map = interp1(1:num,map,ido,'pchip');
 		otherwise
-			error('SC:brewermap:Interp:UnknownType','Cannot interpolate this colorscheme type.')
+			error('SC:brewermap:Interp:UnknownType','Unknown colorscheme type.')
 	end
 	%
 end
@@ -237,7 +241,7 @@ if isa(arr,'string') && isscalar(arr)
 	arr = arr{1};
 end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaCor
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bm1s2c
 function [idx,itp] = bmIndex(N,num,typ)
 % Ensure exactly the same colors as the online ColorBrewer colorschemes.
 %
@@ -299,7 +303,7 @@ end
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmIndex
-function bmc = bmColors()
+function bmc = bmStruct()
 % Return a structure of all colorschemes: name, scheme type, RGB values, number of nodes.
 % Order: sorted first by <typ>, then case-insensitive sorted by <str>.
 bmc(35).str = 'YlOrRd';
@@ -417,12 +421,12 @@ for k = 1:numel(bmc)
 		case 'Sequential'
 			bmc(k).num = 9;
 		otherwise
-			error('SC:brewermap:Colors:UnknownType','Unknown colorscheme type.')
+			error('SC:brewermap:Struct:UnknownType','Unknown colorscheme type.')
 	end
 end
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmColors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmStruct
 %
 % Code and Implementation:
 % Copyright (c) 2014-2024 Stephen Cobeldick

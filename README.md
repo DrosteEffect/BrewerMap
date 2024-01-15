@@ -1,7 +1,7 @@
 BREWERMAP Function
 ==================
 
-BREWERMAP provides all ColorBrewer colorschemes for MATLAB, with simple selection by colormap length and scheme name. Alternatively the scheme name can be preselected, after which only the colormap length is required to define an output colormap.
+BREWERMAP provides all ColorBrewer 2.0 colorschemes for MATLAB, with simple selection by colormap length and scheme name. Alternatively the scheme name can be preselected, after which only the colormap length is required to define an output colormap.
 
 BREWERMAP is compatible with all MATLAB functions that require a colormap function. The function consists of just one M-file that provides all of the ColorBrewer colorschemes (no mat file, no third party files, no file-clutter!). Downsampling or interpolation or repetition of the nodes occurs automatically, if required.
 
@@ -30,8 +30,8 @@ BREWERMAP is compatible with all MATLAB functions that require a colormap functi
     plotm(lat, long, 'k')
     
     % Plot a scheme's RGB values:
-    rgbplot(brewermap(NaN, 'Blues')) % standard
-    rgbplot(brewermap(NaN,'-Blues')) % reversed
+    rgbplot(brewermap(NaN, '+Blues')) % standard
+    rgbplot(brewermap(NaN, '-Blues')) % reversed
     
     % View information about a colorscheme:
     [~,num,typ] = brewermap(NaN,'Paired')
@@ -67,7 +67,7 @@ R2014b or later: BREWERMAP_VIEW can also update other axes' or figures' colormap
     image(S.X)
     brewermap_view(gca) % default = colormap
 
-R2019b or later can also update other axes's or figures' line colororders in real time, for example:
+R2019b or later: BREWERMAP_VIEW can also update other axes's or figures' line colororders in real time, for example:
 
     plot(rand(7,7))
     brewermap_view(gca,[],true) % colororder
