@@ -1,7 +1,7 @@
 function [map,num,typ,scheme] = brewermap(N,scheme)
 % The complete selection of ColorBrewer colorschemes/palettes (RGB colormaps).
 %
-% (c) 2014-2024 Stephen Cobeldick
+% (c) 2014-2025 Stephen Cobeldick
 %
 % Returns an RGB colormap from Cynthia Brewer's ColorBrewer 2.0 palettes,
 % intended for mapping and plots with attractive, distinguishable colors.
@@ -16,6 +16,9 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 % map = brewermap(N)
 %
 % [...,num,typ] = brewermap(...)
+%
+%%% Dependencies:
+% None
 %
 %% Colorschemes %%
 %
@@ -96,7 +99,7 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
 %
-% See also BREWERMAP_PLOT BREWERMAP_VIEW PRESET_COLORMAP CUBEHELIX MAXDISTCOLOR
+% See also BREWERMAP_NODES BREWERMAP_VIEW PRESET_COLORMAP CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET CONTOURF
 
 %% Input Wrangling %%
@@ -429,7 +432,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmStruct
 %
 % Code and Implementation:
-% Copyright (c) 2014-2024 Stephen Cobeldick
+% Copyright (c) 2014-2025 Stephen Cobeldick
 % Color Values Only:
 % Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.
 %

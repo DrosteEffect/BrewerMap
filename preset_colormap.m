@@ -1,12 +1,15 @@
 function map = preset_colormap(N,varargin)
 % Wrapper for any COLORMAP function, to provide preset parameter values.
 %
-% (c) 2020-2024 Stephen Cobeldick
+% (c) 2020-2025 Stephen Cobeldick
 %
 %%% Syntax:
 % preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
 % map = preset_colormap(N)           % generate colormap
 % map = preset_colormap              % generate colormap
+%
+%%% Dependencies:
+% None
 %
 %%% Examples %%%
 %

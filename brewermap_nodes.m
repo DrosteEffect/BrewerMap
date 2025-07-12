@@ -1,10 +1,18 @@
-function brewermap_plot()
-% Simple figure of all ColorBrewer 2.0 colorschemes' defining nodes.
+function brewermap_nodes()
+% Create a figure showing all ColorBrewer 2.0 colorschemes' defining nodes.
 %
-% (c) 2014-2024 Stephen Cobeldick
+% (c) 2014-2025 Stephen Cobeldick
+%
+% View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
+% * Each row of the figure shows the defining nodes for one colorscheme.
+% * Text with all colorschemes' names.
+% * Text with all colorschemes' types (Diverging/Qualitative/Sequential).
 %
 %%% Syntax:
-% brewermap_plot()
+% brewermap_nodes()
+%
+%%% Dependencies:
+% brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET
@@ -21,7 +29,7 @@ if ishghandle(cbh)
 	delete(axh);
 else
 	cbh = figure('HandleVisibility','callback', 'IntegerHandle','off',...
-		'NumberTitle','off', 'Name',mfilename,'Color','white',...
+		'NumberTitle','off', 'Name',mfilename,...
 		'MenuBar','figure', 'Toolbar','none', 'Tag',mfilename);
 	set(cbh,'Units','pixels')
 	pos = get(cbh,'Position');
@@ -49,4 +57,4 @@ end
 drawnow()
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_plot
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_nodes

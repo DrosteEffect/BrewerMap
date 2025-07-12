@@ -1,7 +1,7 @@
 function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
-% Creates an interactive figure for viewing ColorBrewer colormaps. With demo!
+% Create an interactive figure for viewing ColorBrewer colormaps. With demo!
 %
-% (c) 2014-2024 Stephen Cobeldick
+% (c) 2014-2025 Stephen Cobeldick
 %
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
 % * Two colorbars give the colorscheme in color and grayscale.
@@ -23,6 +23,9 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 % Calling the function with an output argument blocks MATLAB execution until
 % the figure is deleted: the final colormap and parameters are then returned.
+%
+%%% Dependencies:
+% brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 %% Adjust Colormaps or Colororders of Figures or Axes %%
 %
@@ -56,7 +59,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
 %
-% See also BREWERMAP BREWERMAP_PLOT CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
+% See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
 % RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
 
 %% Input Wrangling %%
@@ -148,7 +151,7 @@ if new % Create a new figure.
 	axw = 1-cbw-2*gap; % axes width
 	bgw = axw-btw-gap; % button group width
 	%
-	figH = figure('HandleVisibility','callback', 'Color','white',...
+	figH = figure('HandleVisibility','callback',...
 		'IntegerHandle','off', 'NumberTitle','off', 'Units','normalized',...
 		'Name','ColorBrewer Interactive ColorScheme Selector',...
 		'MenuBar','figure', 'Toolbar','none', 'Tag',mfilename);
@@ -175,7 +178,7 @@ if new % Create a new figure.
 	%
 	% Add warning text:
 	txtH = text('Parent',ax2D, 'Units','normalized', 'Position',[1,1],...
-		'HorizontalAlignment','right', 'VerticalAlignment','top', 'Color','k');
+		'HorizontalAlignment','right', 'VerticalAlignment','top');
 	%
 	% Add demo button:
 	demo = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
@@ -211,8 +214,8 @@ if new % Create a new figure.
 	addlistener(pSld, 'Value', 'PostSet',@bmvSldr);
 	%
 	% Add colorscheme button group:
-	bGrp = uibuttongroup('Parent',figH, 'BorderType','none', 'Units','normalized',...
-		'BackgroundColor','white', 'Position',[gap,gap,bgw,bgh-gap]);
+	bGrp = uibuttongroup('Parent',figH, 'BorderType','none', ...
+		'Units','normalized', 'Position',[gap,gap,bgw,bgh-gap]);
 	% Determine button locations:
 	Z = 1:numel(mcs);
 	Z = Z+(Z>17);
@@ -389,7 +392,7 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
 %
-% Copyright (c) 2014-2024 Stephen Cobeldick
+% Copyright (c) 2014-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
