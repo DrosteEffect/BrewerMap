@@ -6,18 +6,18 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 % Returns an RGB colormap from Cynthia Brewer's ColorBrewer 2.0 palettes,
 % intended for mapping and plots with attractive, distinguishable colors.
 %
-%%% Basic Syntax:
+%%% Basic Syntax %%%
 % brewermap() % print summary
 % map = brewermap(N,scheme)
 %
-%%% Preset Syntax:
+%%% Preset Syntax %%%
 % old = brewermap(scheme)
 % map = brewermap()
 % map = brewermap(N)
 %
 % [...,num,typ] = brewermap(...)
 %
-%%% Dependencies:
+%% Dependencies %%
 % None
 %
 %% Colorschemes %%
@@ -49,34 +49,34 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 %
 %% Examples %%
 %
-%%% New colors for the COLORMAP example:
+%%% New colors for the COLORMAP example %%%
 % >> S = load('spine');
 % >> image(S.X)
 % >> colormap(brewermap([],"YlGnBu"))
 %
-%%% New colors for the SURF example:
+%%% New colors for the SURF example %%%
 % >> [X,Y,Z] = peaks(30);
 % >> surfc(X,Y,Z)
 % >> colormap(brewermap([],'RdYlGn'))
 % >> axis([-3,3,-3,3,-10,5])
 %
-%%% Plot a colorscheme's RGB values:
+%%% Plot a colorscheme's RGB values %%%
 % >> rgbplot(brewermap(NaN, '+Blues')) % standard
 % >> rgbplot(brewermap(NaN, '-Blues')) % reversed
 %
-%%% View information about a colorscheme:
+%%% View information about a colorscheme %%%
 % >> [~,num,typ] = brewermap(NaN,'Paired')
 % num = 12
 % typ = 'Qualitative'
 %
-%%% Multi-line plot using matrices:
+%%% Multi-line plot using matrices %%%
 % >> N = 6;
 % >> axes('ColorOrder',brewermap(N,'Pastel2'),'NextPlot','replacechildren')
 % >> X = linspace(0,pi*3,1000);
 % >> Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
 % >> plot(X,Y, 'linewidth',4)
 %
-%%% Multi-line plot in a loop:
+%%% Multi-line plot in a loop %%%
 % set(0,'DefaultAxesColorOrder',brewermap(NaN,'Accent'))
 % N = 6;
 % X = linspace(0,pi*3,1000);
@@ -88,13 +88,13 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (**=default):
+%%% Inputs (**=default) %%%
 % N = NumericScalar, N>=0, an integer to specify the colormap length.
 %   = []**, map has the same length as MATLAB's inbuilt colormap functions.
 %   = NaN, map is exactly the defining RGB nodes (useful for line ColorOrder).
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
-%%% Outputs:
+%%% Outputs %%%
 % map = NumericMatrix, size Nx3, a colormap of RGB values between 0 and 1.
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.

@@ -12,7 +12,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % * Text with the colorscheme's type (Diverging/Qualitative/Sequential).
 % * Text with the colorscheme's number of nodes (i.e. defining colors).
 %
-%%% Syntax:
+%%% Syntax %%%
 % brewermap_view
 % brewermap_view(N)
 % brewermap_view(N,scheme)
@@ -24,7 +24,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % Calling the function with an output argument blocks MATLAB execution until
 % the figure is deleted: the final colormap and parameters are then returned.
 %
-%%% Dependencies:
+%% Dependencies %%
 % brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 %% Adjust Colormaps or Colororders of Figures or Axes %%
@@ -33,7 +33,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % and their COLORMAP will be updated in real-time by BREWERMAP_VIEW.
 % For R2019b or later: set the 3rd input to TRUE to update COLORORDER.
 %
-%%% Examples:
+%% Examples %%
 %
 % >> S = load('spine');
 % >> image(S.X)
@@ -44,7 +44,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (**=default):
+%%% Inputs (**=default) %%%
 % N = NumericScalar, an integer to define the colormap length.
 %   = []**, colormap length of two hundred and fifty-six (256).
 %   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
@@ -54,7 +54,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % isco = LogicalScalar, true/false** updates the colororder/colormap of
 %        the provided axes or figure handles.  R2019b or later only.
 %
-%%% Outputs (these block code execution until the figure is closed!):
+%%% Outputs (these block code execution until the figure is closed!) %%%
 % map = NumericMatrix, the colormap defined when the figure is closed.
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.

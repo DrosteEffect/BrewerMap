@@ -3,15 +3,15 @@ function map = preset_colormap(N,varargin)
 %
 % (c) 2020-2025 Stephen Cobeldick
 %
-%%% Syntax:
+%%% Syntax %%%
 % preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
 % map = preset_colormap(N)           % generate colormap
 % map = preset_colormap              % generate colormap
 %
-%%% Dependencies:
+%% Dependencies %%
 % None
 %
-%%% Examples %%%
+%% Examples %%
 %
 % >> preset_colormap(@cubehelix,0.25,-0.67,1.5,1)
 % >> colormap(preset_colormap)

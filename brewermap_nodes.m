@@ -8,10 +8,10 @@ function brewermap_nodes()
 % * Text with all colorschemes' names.
 % * Text with all colorschemes' types (Diverging/Qualitative/Sequential).
 %
-%%% Syntax:
+%%% Syntax %%%
 % brewermap_nodes()
 %
-%%% Dependencies:
+%% Dependencies %%
 % brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
