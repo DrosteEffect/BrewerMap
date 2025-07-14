@@ -1,24 +1,21 @@
 function [map,num,typ,scheme] = brewermap(N,scheme)
 % The complete selection of ColorBrewer colorschemes/palettes (RGB colormaps).
 %
-% (c) 2014-2025 Stephen Cobeldick
-%
 % Returns an RGB colormap from Cynthia Brewer's ColorBrewer 2.0 palettes,
 % intended for mapping and plots with attractive, distinguishable colors.
 %
 %%% Basic Syntax %%%
-% brewermap() % print summary
-% map = brewermap(N,scheme)
+%
+%   brewermap() % print summary
+%   map = brewermap(N,scheme)
 %
 %%% Preset Syntax %%%
-% old = brewermap(scheme)
-% map = brewermap()
-% map = brewermap(N)
 %
-% [...,num,typ] = brewermap(...)
+%   old = brewermap(scheme)
+%   map = brewermap()
+%   map = brewermap(N)
 %
-%% Dependencies %%
-% None
+%   [...,num,typ] = brewermap(...)
 %
 %% Colorschemes %%
 %
@@ -50,65 +47,74 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 %% Examples %%
 %
 %%% New colors for the COLORMAP example %%%
-% >> S = load('spine');
-% >> image(S.X)
-% >> colormap(brewermap([],"YlGnBu"))
+%
+%   >> S = load('spine');
+%   >> image(S.X)
+%   >> colormap(brewermap([],"YlGnBu"))
 %
 %%% New colors for the SURF example %%%
-% >> [X,Y,Z] = peaks(30);
-% >> surfc(X,Y,Z)
-% >> colormap(brewermap([],'RdYlGn'))
-% >> axis([-3,3,-3,3,-10,5])
+%
+%   >> [X,Y,Z] = peaks(30);
+%   >> surfc(X,Y,Z)
+%   >> colormap(brewermap([],'RdYlGn'))
+%   >> axis([-3,3,-3,3,-10,5])
 %
 %%% Plot a colorscheme's RGB values %%%
-% >> rgbplot(brewermap(NaN, '+Blues')) % standard
-% >> rgbplot(brewermap(NaN, '-Blues')) % reversed
+%
+%   >> rgbplot(brewermap(NaN, '+Blues')) % standard
+%   >> rgbplot(brewermap(NaN, '-Blues')) % reversed
 %
 %%% View information about a colorscheme %%%
-% >> [~,num,typ] = brewermap(NaN,'Paired')
-% num = 12
-% typ = 'Qualitative'
+%
+%   >> [~,num,typ] = brewermap(NaN,'Paired')
+%   num = 12
+%   typ = 'Qualitative'
 %
 %%% Multi-line plot using matrices %%%
-% >> N = 6;
-% >> axes('ColorOrder',brewermap(N,'Pastel2'),'NextPlot','replacechildren')
-% >> X = linspace(0,pi*3,1000);
-% >> Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
-% >> plot(X,Y, 'linewidth',4)
+%
+%   >> N = 6;
+%   >> axes('ColorOrder',brewermap(N,'Pastel2'),'NextPlot','replacechildren')
+%   >> X = linspace(0,pi*3,1000);
+%   >> Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
+%   >> plot(X,Y, 'linewidth',4)
 %
 %%% Multi-line plot in a loop %%%
-% set(0,'DefaultAxesColorOrder',brewermap(NaN,'Accent'))
-% N = 6;
-% X = linspace(0,pi*3,1000);
-% Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
-% for n = 1:N
-%     plot(X(:),Y(:,n), 'linewidth',4);
-%     hold all
-% end
 %
-%% Input and Output Arguments %%
+%   set(0,'DefaultAxesColorOrder',brewermap(NaN,'Accent'))
+%   N = 6;
+%   X = linspace(0,pi*3,1000);
+%   Y = bsxfun(@(x,n)n*sin(x+2*n*pi/N), X(:), 1:N);
+%   for n = 1:N
+%       plot(X(:),Y(:,n), 'linewidth',4);
+%       hold all
+%   end
 %
-%%% Inputs (**=default) %%%
+%% Input Arguments (**=default) %%
+%
 % N = NumericScalar, N>=0, an integer to specify the colormap length.
 %   = []**, map has the same length as MATLAB's inbuilt colormap functions.
 %   = NaN, map is exactly the defining RGB nodes (useful for line ColorOrder).
 % scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
-%%% Outputs %%%
+%% Output Arguments %%
+%
 % map = NumericMatrix, size Nx3, a colormap of RGB values between 0 and 1.
 % num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
 % typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
 %
+%% Dependencies %%
+%
+% None
+%
 % See also BREWERMAP_NODES BREWERMAP_VIEW PRESET_COLORMAP CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET CONTOURF
-
-%% Input Wrangling %%
-%
 persistent bmc scm txt
 %
 if isempty(bmc)
 	bmc = bmStruct();
 end
+%
+%% Input Wrangling %%
 %
 if nargin==0
 	N = [];
@@ -188,7 +194,6 @@ end
 map = bmc(ids).rgb(idx,:)/255;
 %
 % Interpolate:
-%
 if itp
 	%
 	% Extrapolate a small amount beyond the end nodes:

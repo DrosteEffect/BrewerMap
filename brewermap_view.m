@@ -4,6 +4,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % (c) 2014-2025 Stephen Cobeldick
 %
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
+%
 % * Two colorbars give the colorscheme in color and grayscale.
 % * A button toggles between 3D-cube and 2D-lineplot of the RGB values.
 % * A button toggles an endless demo cycle through the colorschemes.
@@ -13,19 +14,17 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % * Text with the colorscheme's number of nodes (i.e. defining colors).
 %
 %%% Syntax %%%
-% brewermap_view
-% brewermap_view(N)
-% brewermap_view(N,scheme)
-% brewermap_view(N,scheme,isco)
-% brewermap_view([],...)
-% brewermap_view(axes/figure handle array,...) % see "Adjust Colormaps"
-% [map,num,typ] = brewermap_view(...)
+%
+%   brewermap_view
+%   brewermap_view(N)
+%   brewermap_view(N,scheme)
+%   brewermap_view(N,scheme,isco)
+%   brewermap_view([],...)
+%   brewermap_view(axes/figure handle array,...) % see "Adjust Colormaps"
+%   [map,num,typ] = brewermap_view(...)
 %
 % Calling the function with an output argument blocks MATLAB execution until
 % the figure is deleted: the final colormap and parameters are then returned.
-%
-%% Dependencies %%
-% brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 %% Adjust Colormaps or Colororders of Figures or Axes %%
 %
@@ -33,37 +32,36 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % and their COLORMAP will be updated in real-time by BREWERMAP_VIEW.
 % For R2019b or later: set the 3rd input to TRUE to update COLORORDER.
 %
-%% Examples %%
+%   >> S = load('spine');
+%   >> image(S.X)
+%   >> brewermap_view(gca) % colormap
 %
-% >> S = load('spine');
-% >> image(S.X)
-% >> brewermap_view(gca) % colormap
+%   >> plot(rand(5,7))
+%   >> brewermap_view(gca,[],true) % colororder
 %
-% >> plot(rand(5,7))
-% >> brewermap_view(gca,[],true) % colororder
+%% Input Arguments (**=default) %%
 %
-%% Input and Output Arguments %%
+%   N = NumericScalar, an integer to define the colormap length.
+%     = []**, colormap length of two hundred and fifty-six (256).
+%     = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
+%     = Array of axes or figure handles. R2014b or later only.
+%   scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
+%          = []** randomly selects a colorscheme.
+%   isco = LogicalScalar, true/false** updates the colororder/colormap of
+%          the provided axes or figure handles.  R2019b or later only.
 %
-%%% Inputs (**=default) %%%
-% N = NumericScalar, an integer to define the colormap length.
-%   = []**, colormap length of two hundred and fifty-six (256).
-%   = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
-%   = Array of axes or figure handles. R2014b or later only.
-% scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
-%        = []** randomly selects a colorscheme.
-% isco = LogicalScalar, true/false** updates the colororder/colormap of
-%        the provided axes or figure handles.  R2019b or later only.
+%% Output Arguments (block code execution until figure is closed) %%
 %
-%%% Outputs (these block code execution until the figure is closed!) %%%
-% map = NumericMatrix, the colormap defined when the figure is closed.
-% num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
-% typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
+%   map = NumericMatrix, the colormap defined when the figure is closed.
+%   num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
+%   typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
+%
+%% Dependencies %%
+%
+% brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
 % RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
-
-%% Input Wrangling %%
-%
 persistent ax2D ln2D ax3D pt3D txtH is2D cbAx cbIm pTxt pSld bEig bGrp bRev scm isr
 %
 new = isempty(ax2D)||~ishghandle(ax2D);
@@ -72,6 +70,8 @@ upd = false;
 upb = false;
 hgv = [];
 nmr = dfn;
+%
+%% Input Wrangling %%
 %
 if nargin>2 && isco
 	% >R2019a only!
@@ -109,7 +109,7 @@ assert(isequal(tmp,[9;17;35]),'SC:brewermap_view:BREWERMAP:OutputOrder',...
 if nargin<2 || isnumeric(scheme)&&isequal(scheme,[])
 	% Default pseudo-random colorscheme:
 	isr = rand(1)>0.5;
-	scm = mcs{1+mod(round(now*1e7),numel(mcs))};
+	scm = mcs{1+mod(round(now*1e7),numel(mcs))}; %#ok<TNOW1>
 else
 	% Parse input colorscheme:
 	scheme = bmv1s2c(scheme);

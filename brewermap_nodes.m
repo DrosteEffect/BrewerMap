@@ -4,22 +4,24 @@ function brewermap_nodes()
 % (c) 2014-2025 Stephen Cobeldick
 %
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
+%
 % * Each row of the figure shows the defining nodes for one colorscheme.
 % * Text with all colorschemes' names.
 % * Text with all colorschemes' types (Diverging/Qualitative/Sequential).
 %
 %%% Syntax %%%
-% brewermap_nodes()
+%
+%   brewermap_nodes()
 %
 %% Dependencies %%
+%
 % brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET
-
-[mcs,nmn,pyt] = brewermap('list');
-%
 persistent cbh axh
+%
+[mcs,nmn,pyt] = brewermap('list');
 %
 xmx = max(nmn);
 ymx = numel(pyt);

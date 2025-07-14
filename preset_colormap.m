@@ -4,37 +4,38 @@ function map = preset_colormap(N,varargin)
 % (c) 2020-2025 Stephen Cobeldick
 %
 %%% Syntax %%%
-% preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
-% map = preset_colormap(N)           % generate colormap
-% map = preset_colormap              % generate colormap
 %
-%% Dependencies %%
-% None
+%   preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
+%   map = preset_colormap(N)           % generate colormap
+%   map = preset_colormap              % generate colormap
 %
 %% Examples %%
 %
-% >> preset_colormap(@cubehelix,0.25,-0.67,1.5,1)
-% >> colormap(preset_colormap)
-% or
-% >> preset_colormap(5)
-% ans =
-%          0         0         0
-%     0.1055    0.2788    0.4895
-%     0.1660    0.6705    0.4961
-%     0.6463    0.8479    0.5076
-%     1.0000    1.0000    1.0000
+%   >> preset_colormap(@cubehelix,0.25,-0.67,1.5,1)
+%   >> colormap(preset_colormap)
 %
-% >> preset_colormap(@brewermap,'PuOr')
-% >> load topo
-% >> load coast
-% >> figure
-% >> worldmap(topo, topolegend)
-% >> contourfm(topo, topolegend);
-% >> contourcmap('preset_colormap', 'Colorbar','on', 'Location','horizontal','TitleString','Contour Intervals in Meters');
-% >> plotm(lat, long, 'k')
+%   >> preset_colormap(5)
+%   ans =
+%            0         0         0
+%       0.1055    0.2788    0.4895
+%       0.1660    0.6705    0.4961
+%       0.6463    0.8479    0.5076
+%       1.0000    1.0000    1.0000
 %
-% See Also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
-
+%   >> preset_colormap(@brewermap,'PuOr')
+%   >> load topo
+%   >> load coast
+%   >> figure
+%   >> worldmap(topo, topolegend)
+%   >> contourfm(topo, topolegend);
+%   >> contourcmap('preset_colormap', 'Colorbar','on', 'Location','horizontal','TitleString','Contour Intervals in Meters');
+%   >> plotm(lat, long, 'k')
+%
+%% Dependencies %%
+%
+% None
+%
+% See also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
 persistent fnh arg
 %
 if nargin==0 % Default N same as MATLAB colormaps.

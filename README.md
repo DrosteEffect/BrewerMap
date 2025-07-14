@@ -57,7 +57,7 @@ BREWERMAP is compatible with all MATLAB functions that require a colormap functi
 
 ### Bonus Functions ###
 
-BREWERMAP_PLOT creates a figure which shows the nodes (defining colors) of all ColorBrewer colorschemes.
+BREWERMAP_NODES creates a figure which shows the nodes (defining colors) of all ColorBrewer colorschemes.
 
 BREWERMAP_VIEW creates an interactive figure that allows selection of the colorscheme, and that contains two colorbars showing colors of the colormap and the grayscale equivalent.
 
@@ -79,11 +79,12 @@ PRESET_COLORMAP is a wrapper for any colormap function, storing the function and
 
 ### Colorspace ###
 
-Interpolation is performed in RGB colorspace. Interpolation in other colorspaces (e.g. CIELab) produces no perceptable benefit at the cost of extra processing and noise caused by the round-trip conversion.
+Interpolation is performed in RGB colorspace. Interpolation in other colorspaces (e.g. CIELab) produces no perceptable benefit at the cost of extra processing and noise caused by the round-trip colorspace conversion.
 
 ### Notes ###
 
 The function BREWERMAP:
+
 * Consists of just one convenient M-file (no .mat files or file clutter).
 * Has no third-party file dependencies.
 * Has no special toolbox dependencies.
