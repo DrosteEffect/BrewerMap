@@ -33,7 +33,7 @@ function map = preset_colormap(N,varargin)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
 persistent fnh arg

@@ -58,7 +58,8 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 %% Dependencies %%
 %
-% brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
+% * MATLAB R2009a or later.
+% * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
 % RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
