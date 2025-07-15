@@ -1,8 +1,6 @@
 function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % Create an interactive figure for viewing ColorBrewer colormaps. With demo!
 %
-% (c) 2014-2025 Stephen Cobeldick
-%
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
 %
 % * Two colorbars give the colorscheme in color and grayscale.
@@ -58,7 +56,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 % * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
@@ -393,7 +391,7 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
 %
-% Copyright (c) 2014-2025 Stephen Cobeldick
+% Copyright (c) 2014-2026 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

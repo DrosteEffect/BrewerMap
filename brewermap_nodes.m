@@ -1,8 +1,6 @@
 function brewermap_nodes()
 % Create a figure showing all ColorBrewer 2.0 colorschemes' defining nodes.
 %
-% (c) 2014-2025 Stephen Cobeldick
-%
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
 %
 % * Each row of the figure shows the defining nodes for one colorscheme.
@@ -15,7 +13,7 @@ function brewermap_nodes()
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 % * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
@@ -61,3 +59,17 @@ drawnow()
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_nodes
+%
+% Copyright (c) 2014-2026 Stephen Cobeldick
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and limitations under the License.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%license

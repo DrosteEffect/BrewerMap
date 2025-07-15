@@ -1,8 +1,6 @@
 function map = preset_colormap(N,varargin)
 % Wrapper for any COLORMAP function, to provide preset parameter values.
 %
-% (c) 2020-2025 Stephen Cobeldick
-%
 %%% Syntax %%%
 %
 %   preset_colormap(@fun,p1,p2,...,pN) % store function with any parameters
@@ -33,7 +31,7 @@ function map = preset_colormap(N,varargin)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 %
 % See also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
 persistent fnh arg
@@ -73,3 +71,17 @@ else
 end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%cmDefaultN
+%
+% Copyright (c) 2014-2026 Stephen Cobeldick
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and limitations under the License.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%license

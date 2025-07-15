@@ -91,20 +91,20 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 %
 %% Input Arguments (**=default) %%
 %
-% N = NumericScalar, N>=0, an integer to specify the colormap length.
-%   = []**, map has the same length as MATLAB's inbuilt colormap functions.
-%   = NaN, map is exactly the defining RGB nodes (useful for line ColorOrder).
-% scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
+%   N = NumericScalar, N>=0, an integer to specify the colormap length.
+%     = []**, map has the same length as MATLAB's inbuilt colormap functions.
+%     = NaN, map is exactly the defining RGB nodes (useful for line ColorOrder).
+%   scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %
 %% Output Arguments %%
 %
-% map = NumericMatrix, size Nx3, a colormap of RGB values between 0 and 1.
-% num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
-% typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
+%   map = NumericMatrix, size Nx3, a colormap of RGB values between 0 and 1.
+%   num = NumericVector, the number of nodes defining the ColorBrewer colorscheme.
+%   typ = CharRowVector, the colorscheme type: 'Diverging'/'Qualitative'/'Sequential'.
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 %
 % See also BREWERMAP_NODES BREWERMAP_VIEW PRESET_COLORMAP CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET CONTOURF
@@ -437,7 +437,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmStruct
 %
 % Code and Implementation:
-% Copyright (c) 2014-2025 Stephen Cobeldick
+% Copyright (c) 2014-2026 Stephen Cobeldick
 % Color Values Only:
 % Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.
 %
