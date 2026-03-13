@@ -46,7 +46,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %   scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %          = []** randomly selects a colorscheme.
 %   isco = LogicalScalar, true/false** updates the colororder/colormap of
-%          the provided axes or figure handles.  R2019b or later only.
+%          the provided axes or figure handles. R2019b or later only.
 %
 %% Output Arguments (block code execution until figure is closed) %%
 %
@@ -62,6 +62,14 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
 % RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
 persistent ax2D ln2D ax3D pt3D txtH is2D cbAx cbIm pTxt pSld bEig bGrp bRev scm isr
+% Release | Feature
+% --------|--------
+% R2008a  | assert(cond, msgID, msg)
+% R2008a  | addlistener on uicontrol/graphics handle objects
+% R2009b  | tilde argument placeholder
+% R2014b  | isgraphics          [only reached when N = axes/figure handles]
+% R2016b  | string class                                 [only if supplied]
+% R2019b  | colororder                             [documented restriction]
 %
 new = isempty(ax2D)||~ishghandle(ax2D);
 dfn = 256;

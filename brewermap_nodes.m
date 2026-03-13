@@ -13,12 +13,15 @@ function brewermap_nodes()
 %
 %% Dependencies %%
 %
-% * MATLAB R2009b or later.
+% * MATLAB R2008a or later.
 % * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
 % See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET
 persistent cbh axh
+% Release | Feature
+% --------|--------
+% R2006a  | all code
 %
 [mcs,nmn,pyt] = brewermap('list');
 %

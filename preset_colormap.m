@@ -31,10 +31,15 @@ function map = preset_colormap(N,varargin)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009b or later.
+% * MATLAB R2008a or later.
 %
 % See also BREWERMAP CUBEHELIX CMOCEAN LBMAP COLORMAP CONTOURCMAP
 persistent fnh arg
+% Release | Feature
+% --------|--------
+% R2004b  | isscalar, function handles
+% R2008a  | assert(cond, msgID, msg, printf format string)
+% R2014b  | HG2 groot, F.Colormap in cmDefaultN     [HG1 fallback provided]
 %
 if nargin==0 % Default N same as MATLAB colormaps.
 	N = cmDefaultN();
@@ -58,9 +63,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%preset_colormap
 function N = cmDefaultN()
 % Get the colormap size from the current figure or default colormap.
-try
+try % >=R2014b, HG2
 	F = get(groot,'CurrentFigure');
-catch %#ok<CTCH> pre HG2
+catch %#ok<CTCH> HG1
 	N = size(get(gcf,'colormap'),1);
 	return
 end

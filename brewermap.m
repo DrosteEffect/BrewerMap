@@ -104,11 +104,17 @@ function [map,num,typ,scheme] = brewermap(N,scheme)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009b or later.
+% * MATLAB R2008a or later.
 %
 % See also BREWERMAP_NODES BREWERMAP_VIEW PRESET_COLORMAP CUBEHELIX MAXDISTCOLOR
 % LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET CONTOURF
 persistent bmc scm txt
+% Release | Feature
+% --------|--------
+% R2004b  | anonymous functions, true/false/nan arrays, isscalar, isvector
+% R2008a  | assert(cond, msgID, msg, printf format string)
+% R2014b  | HG2 groot, F.Colormap in cmDefaultN     [HG1 fallback provided]
+% R2016b  | string class                                 [only if supplied]
 %
 if isempty(bmc)
 	bmc = bmStruct();
@@ -230,9 +236,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap
 function N = cmDefaultN()
 % Get the colormap size from the current figure or default colormap.
-try
+try % >=R2014b, HG2
 	F = get(groot,'CurrentFigure');
-catch %#ok<CTCH> pre HG2
+catch %#ok<CTCH> HG1
 	N = size(get(gcf,'colormap'),1);
 	return
 end
