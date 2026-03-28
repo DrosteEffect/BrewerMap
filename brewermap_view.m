@@ -28,7 +28,7 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 % For R2014b or later: provide axes or figure handles as the first input
 % and their COLORMAP will be updated in real-time by BREWERMAP_VIEW.
-% For R2019b or later: set the 3rd input to TRUE to update COLORORDER.
+% For R2019b or later: set the 3rd input to TRUE to update the COLORORDER.
 %
 %   >> S = load('spine');
 %   >> image(S.X)
@@ -42,11 +42,12 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %   N = NumericScalar, an integer to define the colormap length.
 %     = []**, colormap length of two hundred and fifty-six (256).
 %     = NaN, same length as the defining RGB nodes (useful for Line ColorOrder).
-%     = Array of axes or figure handles. R2014b or later only.
+%     = Array of axes or figure handles (R2014b or later only).
 %   scheme = CharRowVector or StringScalar, a ColorBrewer colorscheme name.
 %          = []** randomly selects a colorscheme.
-%   isco = LogicalScalar, true/false** updates the colororder/colormap of
-%          the provided axes or figure handles. R2019b or later only.
+%   isco = LogicalScalar (R2019b or later only). Selects between:
+%          true  => updates the colororder of the provided axes/figures.
+%          false => updates the colormap   of the provided axes/figures.
 %
 %% Output Arguments (block code execution until figure is closed) %%
 %
@@ -61,20 +62,17 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 % See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
 % RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
-persistent ax2D ln2D ax3D pt3D txtH is2D cbAx cbIm pTxt pSld bEig bGrp bRev scm isr
+persistent fgh fnhSetVals fnhGetVals
 % Release | Feature
 % --------|--------
 % R2008a  | assert(cond, msgID, msg)
 % R2008a  | addlistener on uicontrol/graphics handle objects
 % R2009b  | tilde argument placeholder
-% R2014b  | isgraphics          [only reached when N = axes/figure handles]
+% R2014b  | isgraphics        [only reached when <N> = axes/figure handles]
 % R2016b  | string class                                 [only if supplied]
-% R2019b  | colororder                             [documented restriction]
+% R2019b  | colororder     [documented restriction only when <isco> = true]
 %
-new = isempty(ax2D)||~ishghandle(ax2D);
 dfn = 256;
-upd = false;
-upb = false;
 hgv = [];
 nmr = dfn;
 %
@@ -135,6 +133,52 @@ end
 %
 %% Ensure Figure Exists %%
 %
+if isempty(fgh) || ~ishghandle(fgh)
+	[fgh,fnhSetVals,fnhGetVals] = bmvNewFig(mcs);
+else
+	figure(fgh)
+end
+%
+fnhSetVals(N,scm,isr,hgv,fnh,nmr)
+%
+if nargout
+	waitfor(fgh)
+	[map,num,typ,scheme] = fnhGetVals();
+end
+%
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_view
+function [figH,svh,gvh] = bmvNewFig(mcs)
+% Create the GUI figure and all graphics objects.
+% All workspace variables and nested callback functions live here so that
+% repeated calls to BREWERMAP_VIEW reuse this single workspace via the
+% returned function handles, rather than creating a new (stale) workspace.
+%
+map = [];
+num = [];
+typ = '';
+N   = 256;
+scm = mcs{1};
+isr = false;
+upd = false;
+upb = false;
+hgv = [];
+fnh = @colormap;
+nmr = 256;
+dfn = 256;
+%
+% Figure parameters:
+M   = 9;    % buttons per column
+gap = 0.01; % gaps
+bth = 0.04; % demo button height
+btw = 0.10; % demo button width
+bgh = 0.40; % button group height
+cbw = 0.23; % colorbar width (both together)
+cbh = 1-3*gap-bth; % colorbar height
+axh = 1-bgh-2*gap; % axes height
+axw = 1-cbw-2*gap; % axes width
+bgw = axw-btw-gap; % button group width
+%
 % LHS and RHS slider bounds/limits, and slider step sizes:
 lbd = 1;
 rbd = dfn;
@@ -144,103 +188,110 @@ stp = [1,10]; % [minor,major]
 xyz = 'RGB'; % specify the order here.
 [~,xyz] = ismember(xyz,'RGB');
 %
-if new % Create a new figure.
-	%
-	% Figure parameters:
-	M = 9; % buttons per column
-	gap = 0.01; % gaps
-	bth = 0.04; % demo button height
-	btw = 0.10; % demo button width
-	bgh = 0.40; % button group height
-	cbw = 0.23; % colorbar width (both together)
-	cbh = 1-3*gap-bth; % colorbar height
-	axh = 1-bgh-2*gap; % axes height
-	axw = 1-cbw-2*gap; % axes width
-	bgw = axw-btw-gap; % button group width
-	%
-	figH = figure('HandleVisibility','callback',...
-		'IntegerHandle','off', 'NumberTitle','off', 'Units','normalized',...
-		'Name','ColorBrewer Interactive ColorScheme Selector',...
-		'MenuBar','figure', 'Toolbar','none', 'Tag',mfilename);
-	%
-	% Add 2D lineplot:
-	ax2D = axes('Parent',figH, 'Position',[gap,bgh+gap,axw,axh], 'Box','on',...
-		'ColorOrder',[1,0,0; 0,1,0; 0,0,1; 0.6,0.6,0.6], 'HitTest','off',...
-		'Visible','off', 'XLim',[0,1], 'YLim',[0,1], 'XTick',[], 'YTick',[]);
-	ln2D = line([0,0,0,0;1,1,1,1],[0,0,0,0;1,1,1,1], 'Parent',ax2D,...
-		'Visible','off', 'Linestyle','-', 'Marker','.');
-	%
-	% Add 3D scatterplot:
-	ax3D = axes('Parent',figH, 'OuterPosition',[0,bgh,axw+2*gap,1-bgh],...
-		'Visible','on', 'XLim',[0,1], 'YLim',[0,1], 'ZLim',[0,1], 'HitTest','on');
-	pt3D = patch('Parent',ax3D, 'XData',[0;1], 'YData',[0;1], 'ZData',[0;1],...
-		'Visible','on', 'LineStyle','none', 'FaceColor','none', 'MarkerEdgeColor','none',...
-		'Marker','o', 'MarkerFaceColor','flat', 'MarkerSize',10, 'FaceVertexCData',[1,1,0;1,0,1]);
-	view(ax3D,3);
-	grid(ax3D,'on')
-	lbl = {'Red','Green','Blue'};
-	xlabel(ax3D,lbl{xyz(1)})
-	ylabel(ax3D,lbl{xyz(2)})
-	zlabel(ax3D,lbl{xyz(3)})
-	%
-	% Add warning text:
-	txtH = text('Parent',ax2D, 'Units','normalized', 'Position',[1,1],...
-		'HorizontalAlignment','right', 'VerticalAlignment','top');
-	%
-	% Add demo button:
-	demo = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
-		'Position',[1-cbw/2,1-bth-gap,cbw/2-gap,bth], 'String','Demo',...
-		'Max',1, 'Min',0, 'Callback',@bmvDemo); %#ok<NASGU>
-	% Add 2D/3D button:
-	is2D = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
-		'Position',[1-cbw/1,1-bth-gap,cbw/2-gap,bth], 'String','2D / 3D',...
-		'Max',1, 'Min',0, 'Callback',@bmv2D3D);
-	% Add reverse button:
-	bRev = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
-		'Position',[bgw+2*gap,bgh-bth,btw,bth], 'String','Reverse',...
-		'Max',1, 'Min',0, 'Callback',@bmvRevM);
-	%
-	% Add colorbars:
-	C(1,1,:) = [1,1,1];
-	cbAx(2) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
-		'Position',[1-cbw/2,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
-		'YDir','normal', 'HitTest','off');
-	cbAx(1) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
-		'Position',[1-cbw/1,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
-		'YDir','normal', 'HitTest','off');
-	cbIm(2) = image('Parent',cbAx(2), 'CData',C);
-	cbIm(1) = image('Parent',cbAx(1), 'CData',C);
-	%
-	% Add parameter sliders, listeners, and corresponding text:
-	sv = mean([lbd,rbd],2);
-	pTxt = uicontrol(figH,'Style','text', 'Units','normalized',...
-		'Position',[bgw+2*gap,bgh-2*bth-gap,btw,bth], 'String','X');
-	pSld = uicontrol(figH,'Style','slider', 'Units','normalized',...
-		'Position',[bgw+2*gap,gap,btw,bgh-2*bth-gap], 'Min',lbd(1), 'Max',rbd(1),...
-		'SliderStep',stp(1,:)/(rbd(1)-lbd(1)), 'Value',sv(1));
-	addlistener(pSld, 'Value', 'PostSet',@bmvSldr);
-	%
-	% Add colorscheme button group:
-	bGrp = uibuttongroup('Parent',figH, 'BorderType','none', ...
-		'Units','normalized', 'Position',[gap,gap,bgw,bgh-gap]);
-	% Determine button locations:
-	Z = 1:numel(mcs);
-	Z = Z+(Z>17);
-	C = (ceil(Z/M)-1)/4;
-	R = (M-1-mod(Z-1,M))/M;
-	% Add colorscheme buttons to group:
-	for jj = numel(mcs):-1:1
-		bEig(jj) = uicontrol('Parent',bGrp, 'Style','Toggle', 'String',mcs{jj},...
-			'Unit','normalized', 'Position',[C(jj),R(jj),1/4,1/M]);
-	end
-	set(bGrp,'SelectionChangeFcn',@bmvChgS);
-	%
-end
+figH = figure('HandleVisibility','callback',...
+	'IntegerHandle','off', 'NumberTitle','off', 'Units','normalized',...
+	'Name','ColorBrewer Interactive ColorScheme Selector',...
+	'MenuBar','figure', 'Toolbar','none', 'Tag','brewermap_view');
 %
-%% Nested Functions %%
+% Add 2D lineplot:
+ax2D = axes('Parent',figH, 'Position',[gap,bgh+gap,axw,axh], 'Box','on',...
+	'ColorOrder',[1,0,0; 0,1,0; 0,0,1; 0.6,0.6,0.6], 'HitTest','off',...
+	'Visible','off', 'XLim',[0,1], 'YLim',[0,1], 'XTick',[], 'YTick',[]);
+ln2D = line([0,0,0,0;1,1,1,1],[0,0,0,0;1,1,1,1], 'Parent',ax2D,...
+	'Visible','off', 'Linestyle','-', 'Marker','.');
+%
+% Add 3D scatterplot:
+ax3D = axes('Parent',figH, 'OuterPosition',[0,bgh,axw+2*gap,1-bgh],...
+	'Visible','on', 'XLim',[0,1], 'YLim',[0,1], 'ZLim',[0,1], 'HitTest','on');
+pt3D = patch('Parent',ax3D, 'XData',[0;1], 'YData',[0;1], 'ZData',[0;1],...
+	'Visible','on', 'LineStyle','none', 'FaceColor','none', 'MarkerEdgeColor','none',...
+	'Marker','o', 'MarkerFaceColor','flat', 'MarkerSize',10, 'FaceVertexCData',[1,1,0;1,0,1]);
+view(ax3D,3);
+grid(ax3D,'on')
+lbl = {'Red','Green','Blue'};
+xlabel(ax3D,lbl{xyz(1)})
+ylabel(ax3D,lbl{xyz(2)})
+zlabel(ax3D,lbl{xyz(3)})
+%
+% Add warning text:
+txtH = text('Parent',ax2D, 'Units','normalized', 'Position',[1,1],...
+	'HorizontalAlignment','right', 'VerticalAlignment','top');
+%
+% Add demo button:
+demo = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
+	'Position',[1-cbw/2,1-bth-gap,cbw/2-gap,bth], 'String','Demo',...
+	'Max',1, 'Min',0, 'Callback',@bmvDemo); %#ok<NASGU>
+% Add 2D/3D button:
+is2D = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
+	'Position',[1-cbw/1,1-bth-gap,cbw/2-gap,bth], 'String','2D / 3D',...
+	'Max',1, 'Min',0, 'Callback',@bmv2D3D);
+% Add reverse button:
+bRev = uicontrol(figH, 'Style','togglebutton', 'Units','normalized',...
+	'Position',[bgw+2*gap,bgh-bth,btw,bth], 'String','Reverse',...
+	'Max',1, 'Min',0, 'Callback',@bmvRevM);
+%
+% Add colorbars:
+C(1,1,:) = [1,1,1];
+cbAx(2) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
+	'Position',[1-cbw/2,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
+	'YDir','normal', 'HitTest','off');
+cbAx(1) = axes('Parent',figH, 'Visible','off', 'Units','normalized',...
+	'Position',[1-cbw/1,gap,cbw/2-gap,cbh], 'YLim',[0.5,1.5],...
+	'YDir','normal', 'HitTest','off');
+cbIm(2) = image('Parent',cbAx(2), 'CData',C);
+cbIm(1) = image('Parent',cbAx(1), 'CData',C);
+%
+% Add parameter sliders, listeners, and corresponding text:
+sv = mean([lbd,rbd],2);
+pTxt = uicontrol(figH,'Style','text', 'Units','normalized',...
+	'Position',[bgw+2*gap,bgh-2*bth-gap,btw,bth], 'String','X');
+pSld = uicontrol(figH,'Style','slider', 'Units','normalized',...
+	'Position',[bgw+2*gap,gap,btw,bgh-2*bth-gap], 'Min',lbd(1), 'Max',rbd(1),...
+	'SliderStep',stp(1,:)/(rbd(1)-lbd(1)), 'Value',sv(1));
+addlistener(pSld, 'Value', 'PostSet',@bmvSldr);
+%
+% Add colorscheme button group:
+bGrp = uibuttongroup('Parent',figH, 'BorderType','none', ...
+	'Units','normalized', 'Position',[gap,gap,bgw,bgh-gap]);
+% Determine button locations:
+Z = 1:numel(mcs);
+Z = Z+(Z>17);
+C = (ceil(Z/M)-1)/4;
+R = (M-1-mod(Z-1,M))/M;
+% Add colorscheme buttons to group:
+for jj = numel(mcs):-1:1
+	bEig(jj) = uicontrol('Parent',bGrp, 'Style','Toggle', 'String',mcs{jj},...
+		'Unit','normalized', 'Position',[C(jj),R(jj),1/4,1/M]);
+end
+set(bGrp,'SelectionChangeFcn',@bmvChgS);
+%
+%% Set & Get Functions %%
+%
+gvh = @bmvGetVals;
+svh = @bmvSetVals;
+%
+	function bmvSetVals(varargin)
+		% Inject new call-time inputs into this workspace, then refresh.
+		N   = varargin{1};
+		scm = varargin{2};
+		isr = varargin{3};
+		hgv = varargin{4};
+		fnh = varargin{5};
+		nmr = varargin{6};
+		set(bGrp,'SelectedObject',bEig(strcmpi(scm,mcs)));
+		set(pSld,'Value',max(lbd,min(rbd,N)));
+		upd = true;
+		bmvUpDt()
+	end
+%
+	function varargout = bmvGetVals()
+		varargout = {map,num,typ,bmvName()};
+	end
+%
+%% Nested Callback Functions %%
 %
 	function str = bmvName()
-		% Generate the colorscheme name.
+		% Generate the colorscheme name string (with +/- reversal prefix).
 		pfx = '+-';
 		ids = strcmpi(scm,mcs);
 		if any(ids)
@@ -375,22 +426,8 @@ end
 		%
 	end
 %
-%% Initialize the Figure %%
-%
-set(bGrp,'SelectedObject',bEig(strcmpi(scm,mcs)));
-set(pSld,'Value',max(lbd,min(rbd,N)));
-upd = true;
-bmvUpDt()
-%
-if nargout
-	waitfor(ax2D);
-	scheme = bmvName();
-else
-	clear map
 end
-%
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_view
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmvNewFig
 function arr = bmv1s2c(arr)
 % If scalar string then extract the character vector, otherwise data is unchanged.
 if isa(arr,'string') && isscalar(arr)
@@ -398,7 +435,6 @@ if isa(arr,'string') && isscalar(arr)
 end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
-%
 % Copyright (c) 2014-2026 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");

@@ -476,4 +476,5 @@ end
 %
 % 5. Products derived from this software may not be called "ColorBrewer", nor
 % may "ColorBrewer" appear in their name, without prior written permission of Cynthia Brewer.
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%license
