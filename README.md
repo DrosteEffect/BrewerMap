@@ -67,20 +67,20 @@ Multiline plot in a loop:
 
 ### Bonus Functions ###
 
-BREWERMAP_NODES creates a figure which shows the nodes (defining colors) of all ColorBrewer colorschemes.
+BREWERMAP_GUI_NODES creates a figure which shows the nodes (defining colors) of all ColorBrewer colorschemes.
 
-BREWERMAP_VIEW creates an interactive figure that allows selection of the colorscheme, and that contains two colorbars showing colors of the colormap and the grayscale equivalent.
+BREWERMAP_GUI_VIEW creates an interactive figure that allows selection of the colorscheme, and that contains two colorbars showing colors of the colormap and the grayscale equivalent.
 
-R2014b or later: BREWERMAP_VIEW can also update other axes' or figures' colormaps in real time, for example:
+R2014b or later: BREWERMAP_GUI_VIEW can also update other axes' or figures' COLORMAP in real time, for example:
 
     S = load('spine');
     image(S.X)
-    brewermap_view(gca) % default = colormap
+    brewermap_GUI_view(gca) % default = colormap
 
-R2019b or later: BREWERMAP_VIEW can also update other axes's or figures' line colororders in real time, for example:
+R2019b or later: BREWERMAP_GUI_VIEW can also update other axes's or figures' line COLORORDER in real time, for example:
 
     plot(rand(7,7))
-    brewermap_view(gca,[],true) % colororder
+    brewermap_GUI_view(gca,[],true) % colororder
 
 PRESET_COLORMAP is a wrapper for any colormap function, storing the function and any parameter values for future calls.
 

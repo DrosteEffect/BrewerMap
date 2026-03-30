@@ -1,4 +1,4 @@
-function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
+function [map,num,typ,scheme] = brewermap_GUI_view(N,scheme,isco)
 % Create an interactive figure for viewing ColorBrewer colormaps. With demo!
 %
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
@@ -13,13 +13,13 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %
 %%% Syntax %%%
 %
-%   brewermap_view
-%   brewermap_view(N)
-%   brewermap_view(N,scheme)
-%   brewermap_view(N,scheme,isco)
-%   brewermap_view([],...)
-%   brewermap_view(axes/figure handle array,...) % see "Adjust Colormaps"
-%   [map,num,typ] = brewermap_view(...)
+%   brewermap_GUI_view
+%   brewermap_GUI_view(N)
+%   brewermap_GUI_view(N,scheme)
+%   brewermap_GUI_view(N,scheme,isco)
+%   brewermap_GUI_view([],...)
+%   brewermap_GUI_view(axes/figure handle array,...) % see "Adjust Colormaps"
+%   [map,num,typ] = brewermap_GUI_view(...)
 %
 % Calling the function with an output argument blocks MATLAB execution until
 % the figure is deleted: the final colormap and parameters are then returned.
@@ -27,15 +27,15 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 %% Adjust Colormaps or Colororders of Figures or Axes %%
 %
 % For R2014b or later: provide axes or figure handles as the first input
-% and their COLORMAP will be updated in real-time by BREWERMAP_VIEW.
+% and their COLORMAP will be updated in real-time by BREWERMAP_GUI_VIEW.
 % For R2019b or later: set the 3rd input to TRUE to update the COLORORDER.
 %
 %   >> S = load('spine');
 %   >> image(S.X)
-%   >> brewermap_view(gca) % colormap
+%   >> brewermap_GUI_view(gca) % colormap
 %
 %   >> plot(rand(5,7))
-%   >> brewermap_view(gca,[],true) % colororder
+%   >> brewermap_GUI_view(gca,[],true) % colororder
 %
 %% Input Arguments (**=default) %%
 %
@@ -60,8 +60,8 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 % * MATLAB R2009b or later.
 % * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
-% See also BREWERMAP BREWERMAP_NODES CUBEHELIX PRESET_COLORMAP MAXDISTCOLOR
-% RGBPLOT COLORMAP COLORMAPEDITOR COLORBAR UICONTROL ADDLISTENER
+% See also BREWERMAP BREWERMAP_GUI_NODES PRESET_COLORMAP CUBEHELIX
+% MAXDISTCOLOR COLORMAP COLORORDER COLORBAR RGBPLOT
 persistent fgh fnhSetVals fnhGetVals
 % Release | Feature
 % --------|--------
@@ -89,26 +89,26 @@ err = 'First input <N> must be a real positive scalar numeric or [] or NaN.';
 if nargin==0 || isnumeric(N)&&isequal(N,[])
 	N = dfn;
 elseif isnumeric(N)
-	assert(isscalar(N),'SC:brewermap_view:N:NotScalarNumeric',err)
+	assert(isscalar(N),'SC:brewermap_GUI_view:N:NotScalarNumeric',err)
 	assert(isreal(N)&&isfinite(N)&&fix(N)==N&&N>0||isnan(N),...
-		'SC:brewermap_view:N:NotRealPositiveIntegerNorNaN',err)
+		'SC:brewermap_GUI_view:N:NotRealPositiveIntegerNorNaN',err)
 	N = double(N);
 elseif all(ishghandle(N(:))) % R2014b or later
 	assert(all(isgraphics(N(:),'axes')|isgraphics(N(:),'figure')),...
-		'SC:brewermap_view:N:NotAxesNorFigureHandles',...
+		'SC:brewermap_GUI_view:N:NotAxesNorFigureHandles',...
 		'First input <N> may be an array of figure or axes handles.')
 	hgv = N(:);
 	nmr = arrayfun(@(h)size(fnh(h),1),hgv);
 	N = nmr(1);
 else
-	error('SC:brewermap_view:N:UnsupportedInput',err)
+	error('SC:brewermap_GUI_view:N:UnsupportedInput',err)
 end
 %
 [mcs,nmn,pyt] = brewermap('list');
 %
 % Check BREWERMAP output:
 tmp = find([any(diff(double(char(pyt)),1),2);1]);
-assert(isequal(tmp,[9;17;35]),'SC:brewermap_view:BREWERMAP:OutputOrder',...
+assert(isequal(tmp,[9;17;35]),'SC:brewermap_GUI_view:BREWERMAP:OutputOrder',...
 	'The BREWERMAP function returned an unexpected colorscheme sequence.')
 %
 if nargin<2 || isnumeric(scheme)&&isequal(scheme,[])
@@ -119,7 +119,7 @@ else
 	% Parse input colorscheme:
 	scheme = bmv1s2c(scheme);
 	assert(ischar(scheme) && ndims(scheme)==2 && size(scheme,1)==1,...
-		'SC:brewermap_view:scheme:NotCharacterVector',...
+		'SC:brewermap_GUI_view:scheme:NotCharacterVector',...
 		'Second input <scheme> must be a 1xN char vector.') %#ok<ISMAT>
 	% Check if a reversed colormap was requested:
 	isr = strncmp(scheme,'-',1) || strncmp(scheme,'*',1);
@@ -147,12 +147,12 @@ if nargout
 end
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_view
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_GUI_view
 function [figH,svh,gvh] = bmvNewFig(mcs)
 % Create the graphics objects. Define all callback functions in one workspace.
 %
 % All workspace variables and nested callback functions live here so that
-% repeated calls to BREWERMAP_VIEW reuse this single workspace via the
+% repeated calls to BREWERMAP_GUI_VIEW reuse this single workspace via the
 % returned function handles, rather than creating a new (stale) workspace.
 %
 map = [];

@@ -1,4 +1,4 @@
-function brewermap_nodes()
+function brewermap_GUI_nodes()
 % Create a figure showing all ColorBrewer 2.0 colorschemes' defining nodes.
 %
 % View Cynthia Brewer's ColorBrewer 2.0 colorschemes/palettes in a figure:
@@ -9,15 +9,15 @@ function brewermap_nodes()
 %
 %%% Syntax %%%
 %
-%   brewermap_nodes()
+%   brewermap_GUI_nodes()
 %
 %% Dependencies %%
 %
 % * MATLAB R2008a or later.
 % * brewermap.m <www.mathworks.com/matlabcentral/fileexchange/45208>
 %
-% See also BREWERMAP BREWERMAP_VIEW CUBEHELIX MAXDISTCOLOR
-% LBMAP PARULA LINES RGBPLOT COLORMAP COLORBAR PLOT PLOT3 AXES SET
+% See also BREWERMAP BREWERMAP_GUI_VIEW PRESET_COLORMAP CUBEHELIX
+% MAXDISTCOLOR COLORMAP COLORORDER COLORBAR RGBPLOT
 persistent cbh axh
 % Release | Feature
 % --------|--------
@@ -61,7 +61,7 @@ end
 drawnow()
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_nodes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_GUI_nodes
 %
 % Copyright (c) 2014-2026 Stephen Cobeldick
 %
