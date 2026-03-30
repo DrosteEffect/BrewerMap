@@ -65,12 +65,12 @@ function [map,num,typ,scheme] = brewermap_view(N,scheme,isco)
 persistent fgh fnhSetVals fnhGetVals
 % Release | Feature
 % --------|--------
+% R2019b  | colororder     [documented restriction only when <isco> = true]
+% R2016b  | string class                                 [only if supplied]
+% R2014b  | isgraphics        [only reached when <N> = axes/figure handles]
+% R2009b  | tilde argument placeholder
 % R2008a  | assert(cond, msgID, msg)
 % R2008a  | addlistener on uicontrol/graphics handle objects
-% R2009b  | tilde argument placeholder
-% R2014b  | isgraphics        [only reached when <N> = axes/figure handles]
-% R2016b  | string class                                 [only if supplied]
-% R2019b  | colororder     [documented restriction only when <isco> = true]
 %
 dfn = 256;
 hgv = [];
@@ -149,7 +149,8 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap_view
 function [figH,svh,gvh] = bmvNewFig(mcs)
-% Create the GUI figure and all graphics objects.
+% Create the graphics objects. Define all callback functions in one workspace.
+%
 % All workspace variables and nested callback functions live here so that
 % repeated calls to BREWERMAP_VIEW reuse this single workspace via the
 % returned function handles, rather than creating a new (stale) workspace.
@@ -191,7 +192,7 @@ xyz = 'RGB'; % specify the order here.
 figH = figure('HandleVisibility','callback',...
 	'IntegerHandle','off', 'NumberTitle','off', 'Units','normalized',...
 	'Name','ColorBrewer Interactive ColorScheme Selector',...
-	'MenuBar','figure', 'Toolbar','none', 'Tag','brewermap_view');
+	'MenuBar','figure', 'Toolbar','none', 'Tag',mfilename());
 %
 % Add 2D lineplot:
 ax2D = axes('Parent',figH, 'Position',[gap,bgh+gap,axw,axh], 'Box','on',...
@@ -288,7 +289,7 @@ svh = @bmvSetVals;
 		varargout = {map,num,typ,bmvName()};
 	end
 %
-%% Nested Callback Functions %%
+%% Callback Functions %%
 %
 	function str = bmvName()
 		% Generate the colorscheme name string (with +/- reversal prefix).
@@ -435,16 +436,12 @@ if isa(arr,'string') && isscalar(arr)
 end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmv1s2c
+%
 % Copyright (c) 2014-2026 Stephen Cobeldick
 %
-% Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
+% Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 %
 % http://www.apache.org/licenses/LICENSE-2.0
 %
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and limitations under the License.
+% Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%license
